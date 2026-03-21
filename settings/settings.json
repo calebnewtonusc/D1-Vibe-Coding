@@ -1,0 +1,79 @@
+{
+  "env": {
+    "GITHUB_TOKEN": "YOUR_GITHUB_PERSONAL_ACCESS_TOKEN",
+    "TODOIST_API_TOKEN": "YOUR_TODOIST_API_TOKEN"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(python3:*)",
+      "Bash(pip3:*)",
+      "Bash(vercel:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(echo:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(jq:*)",
+      "Bash(date:*)",
+      "Bash(sort:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(which:*)",
+      "Bash(diff:*)",
+      "Bash(basename:*)",
+      "Bash(dirname:*)"
+    ]
+  },
+  "alwaysThinkingEnabled": true,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in *.ts|*.tsx|*.js|*.jsx|*.mjs|*.cjs|*.json|*.css|*.md) npx prettier --write \"$f\" --log-level silent 2>/dev/null || true;; esac; } 2>/dev/null || true",
+            "statusMessage": "Formatting..."
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '%s' '{\"hookSpecificOutput\": {\"hookEventName\": \"Stop\", \"additionalContext\": \"REMINDER: If you just completed any project, feature, or meaningful change — push to GitHub now. Create the repo if it does not exist, push to main, and share the URL. Never wait to be asked. Also check: did you leave any TODO or FIXME comments in edited files? Surface them.\"}}'",
+            "statusMessage": "End of session check..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; case \"$f\" in *.env|.env.*) echo '{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"additionalContext\": \"WARNING: About to write to a .env file. Make sure no real secrets are being committed. Check .gitignore includes this file.\"}}';;  esac; } 2>/dev/null || true",
+            "statusMessage": "Checking file safety..."
+          }
+        ]
+      }
+    ]
+  }
+}
