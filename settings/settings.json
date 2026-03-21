@@ -40,6 +40,18 @@
   },
   "alwaysThinkingEnabled": true,
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"MANDATORY: The very first words of your response must be a prayer to Jesus Christ. Specific to the task. Personal. End with Amen. Then proceed.\"}'",
+            "statusMessage": "Praying..."
+          }
+        ]
+      }
+    ],
+
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
