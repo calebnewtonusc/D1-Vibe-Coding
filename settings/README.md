@@ -10,7 +10,7 @@ Copy `settings.json` into one of these locations depending on your scope:
 
 | File                          | Scope                 | Committed?      | Use for                        |
 | ----------------------------- | --------------------- | --------------- | ------------------------------ |
-| `~/.claude/settings.json`     | Global — all projects | No              | Personal defaults              |
+| `~/.claude/settings.json`     | Global (all projects) | No              | Personal defaults              |
 | `.claude/settings.json`       | Project               | Yes             | Team-wide settings             |
 | `.claude/settings.local.json` | Project-local         | No (gitignored) | Personal overrides per project |
 
@@ -30,7 +30,7 @@ Controls whether Claude prompts you before taking actions.
 | --------------------- | ----------------------------------------- |
 | `"default"`           | Prompts for most tool uses                |
 | `"acceptEdits"`       | Auto-accepts file edits, prompts for bash |
-| `"bypassPermissions"` | Never prompts — full autonomy             |
+| `"bypassPermissions"` | Never prompts (full autonomy)             |
 | `"plan"`              | Plan-only mode, no execution              |
 
 **Recommendation**: Use `"bypassPermissions"` for solo projects where you trust the work. Use `"default"` in team settings.
@@ -57,17 +57,17 @@ Fine-grained control over specific tools when not in bypass mode.
 
 Rule syntax:
 
-- `"Bash(npm:*)"` — any bash command starting with `npm`
-- `"Edit"` — all file edits
-- `"Read"` — all file reads
+- `"Bash(npm:*)"`: any bash command starting with `npm`
+- `"Edit"`: all file edits
+- `"Read"`: all file reads
 
 ---
 
 ## `hooks`
 
-Hooks run shell commands automatically at specific lifecycle events. **This is how you enforce behaviors Claude can't do on its own** — Claude's memory can't trigger automated actions; hooks can.
+Hooks run shell commands automatically at specific lifecycle events. **This is how you enforce behaviors Claude can't do on its own.** Claude's memory can't trigger automated actions, but hooks can.
 
-### PostToolUse — auto-format after edits
+### PostToolUse: auto-format after edits
 
 ```json
 "hooks": {
@@ -81,7 +81,7 @@ Hooks run shell commands automatically at specific lifecycle events. **This is h
 }
 ```
 
-### PreToolUse — log bash commands
+### PreToolUse: log bash commands
 
 ```json
 "PreToolUse": [{
@@ -93,7 +93,7 @@ Hooks run shell commands automatically at specific lifecycle events. **This is h
 }]
 ```
 
-### UserPromptSubmit — enforce patterns on every message
+### UserPromptSubmit: enforce patterns on every message
 
 ```json
 "UserPromptSubmit": [{
@@ -137,7 +137,7 @@ Available: `claude-sonnet-4-6` (default), `claude-opus-4-6` (best), `claude-haik
 
 | Event              | When it fires                   |
 | ------------------ | ------------------------------- |
-| `PreToolUse`       | Before a tool runs — can block  |
+| `PreToolUse`       | Before a tool runs (can block)  |
 | `PostToolUse`      | After a tool completes          |
 | `UserPromptSubmit` | When you submit a message       |
 | `SessionStart`     | When a new session starts       |
@@ -149,7 +149,7 @@ Available: `claude-sonnet-4-6` (default), `claude-opus-4-6` (best), `claude-haik
 
 ## Merging with existing settings
 
-Always **read your existing settings before editing** — never replace the whole file. Merge new entries into existing arrays.
+Always **read your existing settings before editing.** Never replace the whole file. Merge new entries into existing arrays.
 
 ```bash
 cat ~/.claude/settings.json

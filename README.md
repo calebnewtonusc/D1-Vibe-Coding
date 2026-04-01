@@ -90,7 +90,7 @@ Drop `.claude/rules/` in your project. Each file is auto-loaded as context when 
 
 ## The hooks
 
-In `settings/settings.json` — merge into `~/.claude/settings.json`:
+Copy `settings/settings.json` and merge it into `~/.claude/settings.json`:
 
 ```
 PostToolUse Write|Edit  →  auto-run prettier on every saved file
@@ -121,7 +121,7 @@ The design rules work for any frontend. The database/API rules assume Supabase. 
 
 ```
 claude-workflow-kit/
-├── CLAUDE.md                   # Drop in project root — design system enforcement
+├── CLAUDE.md                   # Drop in project root; enforces design system
 ├── install.sh                  # One-command setup
 ├── SETUP.md                    # Manual setup instructions
 ├── .claude/
