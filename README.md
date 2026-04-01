@@ -4,11 +4,11 @@ A complete, production-ready Claude Code setup. Drop it in and your AI pair prog
 
 ## What you get
 
-**20+ slash commands** covering the full dev lifecycle — scaffold, push, deploy, audit, PR lifecycle, daily planning, sprint tracking.
+**20+ slash commands** covering the full dev lifecycle: scaffold, push, deploy, audit, PR lifecycle, daily planning, sprint tracking.
 
-**10 rules files** auto-injected as context based on file type — security, API patterns, component standards, database, deployment, naming, performance, state management, accessibility, TypeScript.
+**10 rules files** auto-injected as context based on file type: security, API patterns, component standards, database, deployment, naming, performance, state management, accessibility, TypeScript.
 
-**A full design system** (`CLAUDE.md`) that makes every generated UI look like a funded startup's product page. Dark mode, shadcn/ui, Tailwind, scroll-aware navbar, real typography — enforced on every generation.
+**A full design system** (`CLAUDE.md`) that makes every generated UI look like a funded startup's product page. Dark mode, shadcn/ui, Tailwind, scroll-aware navbar, and real typography, all enforced on every generation.
 
 **Hooks** that auto-format files after every write, warn before touching `.env`, and remind you to push to GitHub at the end of each session.
 
