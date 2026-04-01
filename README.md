@@ -24,7 +24,7 @@ cd claude-workflow-kit
 chmod +x install.sh && ./install.sh
 ```
 
-Or manually — takes 5 minutes. See [SETUP.md](SETUP.md).
+Or set it up manually (takes 5 minutes). See [SETUP.md](SETUP.md).
 
 ---
 
