@@ -58,16 +58,16 @@ Or set it up manually (takes 5 minutes). See [SETUP.md](SETUP.md).
 
 The `CLAUDE.md` is the crown jewel. It enforces:
 
-- **Dark mode by default** — `#0a0a0a` background, `zinc-950` surfaces
-- **shadcn/ui always** — never raw `<button>` or `<input>` from scratch
-- **Lucide React icons** — never emoji, never text characters as icons
-- **Scroll-aware navbar on every project** — hidden at top, slides in after 80px, hides near page bottom
-- **Typography hierarchy** — Inter/Geist, `text-5xl font-bold tracking-tight` heroes, proper scale
-- **Cards and buttons with hover states** — every interactive element
-- **Loading/empty/error states** — never blank white space
-- **Responsive layouts** — mobile-first, `max-w-7xl` containers
+- **Dark mode by default**: `#0a0a0a` background, `zinc-950` surfaces
+- **shadcn/ui always**: never raw `<button>` or `<input>` from scratch
+- **Lucide React icons**: never emoji, never text characters as icons
+- **Scroll-aware navbar on every project**: hidden at top, slides in after 80px, hides near page bottom
+- **Typography hierarchy**: Inter/Geist, `text-5xl font-bold tracking-tight` heroes, proper scale
+- **Cards and buttons with hover states**: every interactive element
+- **Loading/empty/error states**: never blank white space
+- **Responsive layouts**: mobile-first, `max-w-7xl` containers
 
-Before shipping any UI, ask: _"Does this look like a YC-backed startup's product page?"_ If no — rebuild it.
+Before shipping any UI, ask: _"Does this look like a YC-backed startup's product page?"_ If not, rebuild it.
 
 ---
 
