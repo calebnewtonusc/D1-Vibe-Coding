@@ -46,7 +46,7 @@ Or set it up manually (takes 5 minutes). See [SETUP.md](SETUP.md).
 | `/changelog`   | Changelog from git log since last tag                          |
 | `/cleanup`     | Remove dead code, console.logs, unused imports                 |
 | `/deps`        | Check outdated, unused, vulnerable dependencies                |
-| `/env-check`   | Compare `.env.example` vs `.env` — find gaps                   |
+| `/env-check`   | Compare `.env.example` vs `.env` to find gaps                  |
 | `/sprint`      | Today's task breakdown by priority                             |
 | `/todo`        | Add a task from natural language                               |
 | `/done`        | Mark a task complete                                           |
