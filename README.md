@@ -75,16 +75,16 @@ Before shipping any UI, ask: _"Does this look like a YC-backed startup's product
 
 Drop `.claude/rules/` in your project. Each file is auto-loaded as context when Claude touches matching files:
 
-- **security.md** — parameterized queries, RLS, no secrets in logs, auth ownership checks
-- **api.md** — Next.js App Router routes, Zod validation, consistent error shapes
-- **components.md** — shadcn/ui enforcement, skeleton/empty/error state patterns
-- **database.md** — Supabase conventions, RLS policies, migration workflow
-- **deployment.md** — Vercel deploy workflow, pre-deploy checklist
-- **naming.md** — file, variable, DB, API, branch naming conventions
-- **performance.md** — `next/image`, `next/font`, Server Components, bundle size
-- **state.md** — React Query for server state, URL state, Zustand for shared UI
-- **accessibility.md** — semantic HTML, focus management, WCAG contrast, ARIA
-- **typescript.md** — strict mode patterns, Zod integration, no `any`
+- **security.md**: parameterized queries, RLS, no secrets in logs, auth ownership checks
+- **api.md**: Next.js App Router routes, Zod validation, consistent error shapes
+- **components.md**: shadcn/ui enforcement, skeleton/empty/error state patterns
+- **database.md**: Supabase conventions, RLS policies, migration workflow
+- **deployment.md**: Vercel deploy workflow, pre-deploy checklist
+- **naming.md**: file, variable, DB, API, branch naming conventions
+- **performance.md**: `next/image`, `next/font`, Server Components, bundle size
+- **state.md**: React Query for server state, URL state, Zustand for shared UI
+- **accessibility.md**: semantic HTML, focus management, WCAG contrast, ARIA
+- **typescript.md**: strict mode patterns, Zod integration, no `any`
 
 ---
 
