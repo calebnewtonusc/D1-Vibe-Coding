@@ -1,6 +1,6 @@
 # Claude Workflow Kit
 
-A complete, production-ready Claude Code setup. Drop it in and your AI pair programmer immediately writes better code, ships better UIs, and follows better patterns — without you telling it twice.
+A complete, production-ready Claude Code setup. Drop it in and your AI pair programmer immediately writes better code, ships better UIs, and follows better patterns. You never have to tell it twice.
 
 ## What you get
 
