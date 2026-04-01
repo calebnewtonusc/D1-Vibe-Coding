@@ -45,6 +45,7 @@ This rule overrides everything. It applies to "yo", "hey", bug fixes, code quest
 ## TECH STACK — ALWAYS USE THESE
 
 ### React / Next.js projects
+
 - Tailwind CSS (always)
 - shadcn/ui components (always — never build raw buttons, inputs, dialogs from scratch)
 - Lucide React icons (always)
@@ -52,12 +53,14 @@ This rule overrides everything. It applies to "yo", "hey", bug fixes, code quest
 - Framer Motion for animations when there's interactivity
 
 ### Vanilla HTML (no framework)
+
 - Tailwind CDN (`<script src="https://cdn.tailwindcss.com"></script>`)
 - Google Fonts: Inter (`<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">`)
 - Lucide CDN for icons
 - Never write raw CSS for layout — Tailwind only
 
 ### Vue / Nuxt
+
 - Tailwind CSS + Headless UI + Heroicons
 
 ---
@@ -65,6 +68,7 @@ This rule overrides everything. It applies to "yo", "hey", bug fixes, code quest
 ## VISUAL DESIGN — MANDATORY
 
 ### Color
+
 - **Default palette**: slate/zinc/gray neutrals + one vibrant accent (indigo, violet, blue, emerald, or rose)
 - Background: `#0a0a0a` or `zinc-950` — never pure `#000000` or `#ffffff`
 - Text primary: `white` or `zinc-50`
@@ -73,6 +77,7 @@ This rule overrides everything. It applies to "yo", "hey", bug fixes, code quest
 - Never use default browser blue links
 
 ### Typography
+
 - Font: Inter or Geist — NEVER system fonts, NEVER Times New Roman
 - Hero headline: `text-5xl md:text-7xl font-bold tracking-tight`
 - Section heading: `text-3xl md:text-4xl font-semibold tracking-tight`
@@ -81,6 +86,7 @@ This rule overrides everything. It applies to "yo", "hey", bug fixes, code quest
 - Always use `antialiased` on body
 
 ### Backgrounds — pick one, never flat black
+
 - Radial gradient: `bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-zinc-950 to-zinc-950`
 - Mesh: layered radial gradients at different positions
 - Dot grid: `bg-dot-pattern` or SVG dot overlay
@@ -88,6 +94,7 @@ This rule overrides everything. It applies to "yo", "hey", bug fixes, code quest
 - Glassmorphism panels: `bg-white/5 backdrop-blur-md border border-white/10`
 
 ### Spacing & Layout
+
 - Always responsive: design mobile-first
 - Use `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` for page containers
 - Section padding: `py-20 md:py-32`
@@ -96,30 +103,39 @@ This rule overrides everything. It applies to "yo", "hey", bug fixes, code quest
 - Grid layouts: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`
 
 ### Cards & Surfaces
+
 ```
 bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl
 hover:border-zinc-700 transition-all duration-200
 ```
+
 Glassmorphism variant:
+
 ```
 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6
 ```
 
 ### Buttons
+
 Primary:
+
 ```
 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700
 text-white font-semibold px-6 py-2.5 rounded-xl
 transition-all duration-200 shadow-lg shadow-indigo-500/25
 cursor-pointer
 ```
+
 Secondary:
+
 ```
 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700
 text-zinc-100 font-medium px-6 py-2.5 rounded-xl
 transition-all duration-200 cursor-pointer
 ```
+
 Ghost:
+
 ```
 hover:bg-white/5 text-zinc-400 hover:text-white
 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer
@@ -128,12 +144,14 @@ px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer
 ### Navigation — SCROLL-AWARE (MANDATORY ON ALL PROJECTS)
 
 **Every project must use a scroll-aware navbar with this exact behavior:**
+
 - Hidden / transparent at the very top of the page (y = 0)
 - Slides down and becomes visible after scrolling past ~80px
 - Hides again when the user scrolls within ~200px of the bottom of the page
 - Smooth `transition: transform 0.3s ease, opacity 0.3s ease`
 
 **Logic (useScrollNav hook — copy this pattern every time):**
+
 ```tsx
 "use client";
 import { useEffect, useState } from "react";
@@ -158,6 +176,7 @@ export function useScrollNav() {
 ```
 
 **Apply to the nav element:**
+
 ```tsx
 const visible = useScrollNav();
 // ...
@@ -174,25 +193,36 @@ const visible = useScrollNav();
 **Never use a static always-visible sticky navbar.** This pattern is mandatory on every project.
 
 **Vanilla HTML equivalent (no React — use this for plain HTML projects):**
+
 ```html
-<nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(12px);background:rgba(10,10,10,0.85);border-bottom:1px solid rgba(255,255,255,0.08);transform:translateY(-100%);opacity:0;transition:transform 0.3s ease,opacity 0.3s ease;">
+<nav
+  id="navbar"
+  style="position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(12px);background:rgba(10,10,10,0.85);border-bottom:1px solid rgba(255,255,255,0.08);transform:translateY(-100%);opacity:0;transition:transform 0.3s ease,opacity 0.3s ease;"
+>
   <!-- nav content -->
 </nav>
 <script>
-(function() {
-  var nav = document.getElementById('navbar');
-  window.addEventListener('scroll', function() {
-    var scrollY = window.scrollY;
-    var nearBottom = scrollY + window.innerHeight >= document.documentElement.scrollHeight - 200;
-    var visible = scrollY > 80 && !nearBottom;
-    nav.style.transform = visible ? 'translateY(0)' : 'translateY(-100%)';
-    nav.style.opacity = visible ? '1' : '0';
-  }, { passive: true });
-})();
+  (function () {
+    var nav = document.getElementById("navbar");
+    window.addEventListener(
+      "scroll",
+      function () {
+        var scrollY = window.scrollY;
+        var nearBottom =
+          scrollY + window.innerHeight >=
+          document.documentElement.scrollHeight - 200;
+        var visible = scrollY > 80 && !nearBottom;
+        nav.style.transform = visible ? "translateY(0)" : "translateY(-100%)";
+        nav.style.opacity = visible ? "1" : "0";
+      },
+      { passive: true },
+    );
+  })();
 </script>
 ```
 
 ### Form Inputs
+
 ```
 bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2.5
 text-white placeholder-zinc-500
@@ -201,6 +231,7 @@ transition-all duration-200 w-full
 ```
 
 ### Badges / Pills
+
 ```
 inline-flex items-center gap-1.5 px-3 py-1 rounded-full
 text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20
@@ -233,6 +264,7 @@ text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20
 ## PAGE SECTIONS — HOW TO BUILD THEM
 
 ### Hero Section
+
 - Full viewport height or at least 80vh
 - Large bold headline with gradient text accent: `bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent`
 - Muted subtitle, 1-2 sentences max
@@ -241,30 +273,36 @@ text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20
 - Optional: floating UI mockup or screenshot
 
 ### Feature Grid
+
 - 3-column grid on desktop, 1-col mobile
 - Each card: icon in colored bubble + heading + description
 - Consistent card height
 
 ### Pricing
+
 - 3-tier layout, center card highlighted with border + shadow
 - "Most popular" badge on center
 - Feature checklist with checkmark icons
 
 ### Stats/Numbers
+
 - Large numbers with gradient treatment
 - Short label below
 - Horizontal row, centered
 
 ### Testimonials
+
 - Card grid with avatar, quote, name, title
 - Star ratings if applicable
 
 ### CTA Section
+
 - Full-width, centered
 - Gradient background or bordered box
 - One clear headline + one button
 
 ### Footer
+
 - Multi-column links
 - Logo + tagline left
 - Social icons right
@@ -304,6 +342,58 @@ whileTap={{ scale: 0.98 }}
 - NO inline styles (use Tailwind classes)
 - NO missing loading/empty/error states in data-driven UIs
 - NO shipping without checking mobile view
+- **NO EM DASHES (--) anywhere, ever. In code comments, copy, documentation, chat responses, anywhere. Use a colon, period, or comma instead.**
+- **NO EMOJIS anywhere, ever. Not in copy, not in code, not in commit messages.**
+
+---
+
+## AI SLOP CHECK -- MANDATORY SELF-AUDIT BEFORE SHIPPING
+
+Before shipping any output (UI, code, copy, documentation), run this self-check:
+
+### What is AI slop?
+Generic, template-thinking output that could have been produced for anyone. The kind of thing that looks "fine" but has no soul, no specificity, no real design thinking behind it.
+
+### The self-audit (run after every iteration)
+
+**Copy check:**
+- Is any text generic enough to be on a thousand other sites? ("Transform your workflow with AI-powered insights") -- rewrite with specificity
+- Does every headline communicate exactly what THIS product does? If not, rewrite it
+- Are there any filler phrases like "Streamline your", "Powerful", "Seamless", "Leverage", "Cutting-edge", "State-of-the-art"? Delete them
+- Are there em dashes? Replace them
+
+**Design check:**
+- Is this the same 3-column icon + heading + description card grid used for every section? Vary the layout
+- Does every section look identical to the last? Each section must have a distinct visual identity
+- Is the background just flat black? Add gradient treatment
+- Do the cards disappear into the background? Add visible borders/backgrounds
+
+**Code check:**
+- Are there `any` types? Fix them
+- Are there unused imports? Remove them
+- Are there `console.log` statements? Remove them
+- Is there commented-out code? Remove it
+- Are there TODO comments that weren't addressed? Address them or create a task
+
+**UX check (run after every design iteration):**
+
+Every iteration must pass ALL of these before moving on:
+```
+[ ] Hick's Law: No more than 7 options visible at once in menus/nav
+[ ] Miller's Law: No more than 9 items in any list before pagination
+[ ] Fitts's Law: Primary CTA is 44px+ tap target, prominent location
+[ ] Doherty Threshold: Every async action shows feedback within 400ms
+[ ] Law of Proximity: Related items grouped, unrelated items separated
+[ ] Law of Similarity: Interactive elements look different from static content
+[ ] Von Restorff Effect: ONE highlighted CTA per section (not two, not zero)
+[ ] Serial Position Effect: Primary action at start or end of navigation
+[ ] Goal-Gradient Effect: Multi-step flows show progress
+[ ] Cognitive Load: Every element earns its place
+[ ] Peak-End Rule: Success state is satisfying, error state is actionable
+[ ] Aesthetic-Usability: Full dark design system applied
+```
+
+If any box is unchecked -- fix it before continuing to the next section.
 
 ---
 
@@ -359,16 +449,16 @@ Before writing any component, name what the content IS and pick a design that di
 
 These MCP servers are mandatory for D1-level vibe coding. Each one eliminates a class of friction.
 
-| Server | Package | Why It Matters |
-|--------|---------|----------------|
-| **filesystem** | `@modelcontextprotocol/server-filesystem` | Read/write local files directly — no copy-paste needed |
-| **github** | `@modelcontextprotocol/server-github` | Create repos, PRs, issues, read code — all from chat |
-| **postgres** | `@modelcontextprotocol/server-postgres` | Query production DB directly to debug data issues |
-| **puppeteer** | `@modelcontextprotocol/server-puppeteer` | Screenshot any URL, test UI, scrape data |
-| **memory** | `@modelcontextprotocol/server-memory` | Persist facts across sessions — no re-explaining context |
-| **supabase** | `mcp-server-supabase` | Manage tables, run migrations, check RLS from chat |
-| **sequential-thinking** | `@modelcontextprotocol/server-sequential-thinking` | Force step-by-step reasoning on complex multi-step problems |
-| **composio** | Composio MCP URL | GitHub, Gmail, Google Calendar, Todoist, Vercel, Slack — 100+ tools |
+| Server                  | Package                                            | Why It Matters                                                      |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------------------------------- |
+| **filesystem**          | `@modelcontextprotocol/server-filesystem`          | Read/write local files directly — no copy-paste needed              |
+| **github**              | `@modelcontextprotocol/server-github`              | Create repos, PRs, issues, read code — all from chat                |
+| **postgres**            | `@modelcontextprotocol/server-postgres`            | Query production DB directly to debug data issues                   |
+| **puppeteer**           | `@modelcontextprotocol/server-puppeteer`           | Screenshot any URL, test UI, scrape data                            |
+| **memory**              | `@modelcontextprotocol/server-memory`              | Persist facts across sessions — no re-explaining context            |
+| **supabase**            | `mcp-server-supabase`                              | Manage tables, run migrations, check RLS from chat                  |
+| **sequential-thinking** | `@modelcontextprotocol/server-sequential-thinking` | Force step-by-step reasoning on complex multi-step problems         |
+| **composio**            | Composio MCP URL                                   | GitHub, Gmail, Google Calendar, Todoist, Vercel, Slack — 100+ tools |
 
 Config lives at `/Users/joelnewton/Desktop/2026-Code/.mcp.json`.
 
@@ -379,22 +469,26 @@ Config lives at `/Users/joelnewton/Desktop/2026-Code/.mcp.json`.
 When a task can be split into independent sub-tasks, always parallelize. Never work sequentially when parallel is possible.
 
 ### When to use sub-agents
+
 - **Research + Build**: one agent researches the codebase while another writes boilerplate
 - **Multi-file refactors**: split files across agents
 - **Build + Test**: one agent builds, one writes tests simultaneously
 - **Data + UI**: fetch data shape while building the component
 
 ### claude-squad (headless parallel agents)
+
 ```bash
 # Spin up N headless Claude agents on the same repo
 claude-squad --agents 3 --task "implement feature X"
 ```
 
 ### Headless vs interactive mode
+
 - **Interactive** (default): for tasks that need your judgment mid-way
 - **Headless** (`--headless`): for well-defined tasks that can run to completion unattended — use for scaffolding, test writing, docs
 
 ### Sub-agent patterns
+
 - Give each agent a tight scope: one file, one feature, one concern
 - Always merge back to main context and verify before shipping
 - Use worktrees (`git worktree add`) for truly isolated parallel work
@@ -406,6 +500,7 @@ claude-squad --agents 3 --task "implement feature X"
 For any feature involving AI responses, streaming, or structured outputs:
 
 ### Streaming responses (mandatory — never buffer AI output)
+
 ```typescript
 import { streamText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
@@ -422,18 +517,21 @@ export async function POST(req: Request) {
 ```
 
 ### Client-side streaming hook
+
 ```typescript
 import { useChat } from "ai/react";
 
 export function ChatUI() {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: "/api/chat",
-  });
+  const { messages, input, handleInputChange, handleSubmit, isLoading } =
+    useChat({
+      api: "/api/chat",
+    });
   // render messages
 }
 ```
 
 ### Structured outputs (use when you need typed JSON back)
+
 ```typescript
 import { generateObject } from "ai";
 import { z } from "zod";
@@ -451,6 +549,7 @@ const { object } = await generateObject({
 ```
 
 ### Tool calling (give Claude real-world actions)
+
 ```typescript
 import { streamText, tool } from "ai";
 import { z } from "zod";
@@ -469,6 +568,7 @@ const result = streamText({
 ```
 
 ### RAG architecture basics
+
 1. **Ingest**: chunk documents → embed with `text-embedding-3-small` → store in Supabase `pgvector`
 2. **Retrieve**: embed user query → cosine similarity search → return top K chunks
 3. **Generate**: inject chunks into system prompt → stream response
