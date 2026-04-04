@@ -1,18 +1,48 @@
-# Second Brain — Claude Persistent Context System
+# Second Brain — Two-Repo Architecture
 
-The D1 second brain gives Claude a persistent memory of who you are, what you're working on, and how you work. Instead of re-explaining yourself every session, Claude loads your context automatically and picks up exactly where you left off.
+The D1 second brain splits into two repos with a hard boundary:
 
-## What it is
+```
+claude-context/   PUBLIC — operational instructions for Claude
+                  CLAUDE.md, rules/, behavioral standards
+                  Contains: how Claude should behave
+                  Contains NOTHING about you personally
 
-A set of structured markdown files Claude loads at the start of every session. They cover:
+personal-context/ PRIVATE — who you are and what you're working on
+                  YOU.md, NOW.md, PEOPLE.md, SYSTEM.md
+                  Contains: your identity, projects, contacts, APIs
+```
 
-- **YOU.md** — who you are, your background, skills, goals, working style
-- **NOW.md** — current jobs, active projects, priorities, what's broken
-- **PEOPLE.md** — collaborators, teammates, people in your orbit
-- **SYSTEM.md** — your tools, APIs, infrastructure, credentials format
-- **STACK.md** — your preferred tech stack and coding standards
+## Why split?
 
-Each file is auto-committed to a private GitHub repo every time it changes. Over time this becomes a living, versioned history of your professional life that Claude can always reference.
+**claude-context can be public.** It's just a set of coding standards and behavioral rules — no different from a public dotfiles repo. Other devs can fork it. Your AI setup becomes shareable without exposing anything personal.
+
+**personal-context stays private.** Your job history, project URLs, contacts, API key formats, personal stories — none of that bleeds into a public repo.
+
+## What each repo contains
+
+### claude-context (public)
+
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | Full design system + behavioral rules |
+| `rules/` | 18 rules files (API, components, DB, deploy, etc.) |
+| `commands/` | Slash commands for Claude Code |
+| `hooks/` | PostToolUse formatters and sync hooks |
+
+Claude loads this once and knows how to write code, design UIs, and behave.
+
+### personal-context (private)
+
+| File | Purpose |
+|------|---------|
+| `YOU.md` | Who you are: background, skills, goals, working style |
+| `NOW.md` | Current jobs, active projects, priorities, what's broken |
+| `PEOPLE.md` | Collaborators, teammates, contacts |
+| `SYSTEM.md` | Tools, APIs, infrastructure, credentials format |
+| `STACK.md` | Your specific tech preferences (can overlap with claude-context) |
+
+Claude loads this every session and picks up exactly where you left off.
 
 ## Setup (5 minutes)
 
@@ -22,38 +52,26 @@ chmod +x init-brain.sh
 ./init-brain.sh
 ```
 
-The script will:
-1. Walk you through each context file
-2. Create a private GitHub repo for your brain
-3. Wire up the auto-commit hook so changes push automatically
-4. Add the SessionStart hook so Claude loads your context on every session
+The script creates both repos, fills in templates, and wires the SessionStart hook.
 
 ## Agent integrations
-
-Once your brain is set up, wire in your agents:
 
 - [iMessage Agent](agents/imessage.md) — Claude reads and sends your iMessages
 - [Composio MCP](agents/composio.md) — 100+ integrations: GitHub, Gmail, Calendar, Todoist, Vercel
 - [Todoist Session Context](agents/todoist.md) — Today's top tasks injected into every session
 
-## Manual setup
+## The auto-update loop
 
-If you prefer to skip the script, copy the templates from `context/` and fill them in:
+Once set up, you never touch these files manually. Claude updates them as you work:
 
-```bash
-mkdir -p ~/.claude/context
-cp second-brain/context/*.md ~/.claude/context/
-# Edit each file with your info
-```
+| What happened | File updated |
+|--------------|-------------|
+| New job or role | `NOW.md` |
+| Project ships or dies | `NOW.md` |
+| New collaborator | `PEOPLE.md` |
+| New API or tool | `SYSTEM.md` |
+| Stack preference change | `STACK.md` |
 
-Then add this to your `~/.claude/settings.json` `hooks.SessionStart`:
-
-```json
-{
-  "type": "command",
-  "command": "cat ~/.claude/context/YOU.md ~/.claude/context/NOW.md 2>/dev/null | head -200",
-  "statusMessage": "Loading your context..."
-}
-```
+PostToolUse hook auto-commits and pushes on every write. Your brain stays current.
 
 All glory to God! ✝️❤️
