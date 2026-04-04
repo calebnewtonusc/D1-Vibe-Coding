@@ -1,56 +1,52 @@
 #!/bin/bash
+# D1 Vibe Coding — Quick install
+# Copies CLAUDE.md + .claude/ into the current project directory.
+# For full infrastructure setup (second brain, iMessage agent, MCP), run setup.sh instead.
+
 set -e
 
-BLUE='\033[0;34m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+GRN='\033[0;32m'
+YLW='\033[1;33m'
 NC='\033[0m'
 
-echo ""
-echo -e "${BLUE}Claude Workflow Kit — Installer${NC}"
-echo "================================"
-echo ""
-
-# Detect project root or use current dir
 PROJECT_DIR="${1:-$(pwd)}"
-CLAUDE_GLOBAL="$HOME/.claude"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo -e "${YELLOW}Installing to:${NC} $PROJECT_DIR"
-echo -e "${YELLOW}Global config:${NC} $CLAUDE_GLOBAL"
+echo ""
+echo "D1 Vibe Coding — Project Install"
+echo "================================="
+echo ""
+echo "Installing to: $PROJECT_DIR"
 echo ""
 
-# 1. Copy CLAUDE.md to project
-echo "→ Copying CLAUDE.md to project root..."
+# Copy CLAUDE.md
 cp "$SCRIPT_DIR/CLAUDE.md" "$PROJECT_DIR/CLAUDE.md"
-echo -e "  ${GREEN}✓${NC} $PROJECT_DIR/CLAUDE.md"
+echo -e "  ${GRN}✓${NC} CLAUDE.md"
 
-# 2. Copy .claude/ directory
-echo "→ Copying .claude/ directory..."
-cp -r "$SCRIPT_DIR/.claude/" "$PROJECT_DIR/.claude/"
-echo -e "  ${GREEN}✓${NC} $PROJECT_DIR/.claude/ (commands, rules, templates, snippets)"
+# Copy .claude/ (commands, rules, hooks)
+mkdir -p "$PROJECT_DIR/.claude"
+cp -r "$SCRIPT_DIR/.claude/commands" "$PROJECT_DIR/.claude/"
+cp -r "$SCRIPT_DIR/.claude/rules"    "$PROJECT_DIR/.claude/"
+cp -r "$SCRIPT_DIR/.claude/hooks"    "$PROJECT_DIR/.claude/"
+echo -e "  ${GRN}✓${NC} .claude/ ($(ls "$SCRIPT_DIR/.claude/commands/" | wc -l | tr -d ' ') commands, $(ls "$SCRIPT_DIR/.claude/rules/" | wc -l | tr -d ' ') rules)"
 
-# 3. Merge settings into ~/.claude/settings.json
-echo "→ Merging settings..."
-SETTINGS_SRC="$SCRIPT_DIR/settings/settings.json"
-SETTINGS_DEST="$CLAUDE_GLOBAL/settings.json"
-
+# Merge settings if no global settings exist
+SETTINGS_DEST="$HOME/.claude/settings.json"
 if [ ! -f "$SETTINGS_DEST" ]; then
-  mkdir -p "$CLAUDE_GLOBAL"
-  cp "$SETTINGS_SRC" "$SETTINGS_DEST"
-  echo -e "  ${GREEN}✓${NC} Created $SETTINGS_DEST"
+  mkdir -p "$HOME/.claude"
+  cp "$SCRIPT_DIR/settings/settings.json" "$SETTINGS_DEST"
+  echo -e "  ${GRN}✓${NC} ~/.claude/settings.json (created)"
 else
-  echo -e "  ${YELLOW}!${NC} $SETTINGS_DEST already exists — merge manually"
-  echo -e "     See $SETTINGS_SRC for the hooks and env blocks to add"
+  echo -e "  ${YLW}!${NC} ~/.claude/settings.json exists — merge settings/settings.json manually"
 fi
 
 echo ""
-echo -e "${GREEN}Done!${NC}"
+echo -e "${GRN}Done.${NC} CLAUDE.md and .claude/ are in your project."
 echo ""
 echo "Next steps:"
 echo "  1. Add your tokens to ~/.claude/settings.json:"
-echo '     "env": { "GITHUB_TOKEN": "...", "TODOIST_API_TOKEN": "..." }'
-echo "  2. Run 'gh auth login' if you haven't already"
-echo "  3. Open Claude Code and try: /new-project my-app"
+echo '     "env": { "GITHUB_TOKEN": "...", "ANTHROPIC_API_KEY": "...", "TODOIST_API_TOKEN": "..." }'
 echo ""
-echo "See SETUP.md for full configuration options."
+echo "For full infrastructure (second brain + iMessage agent + MCP):"
+echo "  chmod +x setup.sh && ./setup.sh"
+echo ""
