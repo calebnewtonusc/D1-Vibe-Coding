@@ -432,16 +432,9 @@ if composio_url:
         "headers": {"x-api-key": composio_key} if composio_key else {}
     }
 
-# iMessage agent (use tsx if available, else bun)
-agent_entry = os.path.join(imsg_dir, "agent.ts")
-if os.path.exists(agent_entry):
-    mcp["mcpServers"]["imessage"] = {
-        "command": "bun" if os.system("command -v bun > /dev/null 2>&1") == 0 else "npx",
-        "args": ["--bun", "run", agent_entry] if os.system("command -v bun > /dev/null 2>&1") == 0 else ["tsx", agent_entry],
-        "env": {
-            "ANTHROPIC_API_KEY": "${ANTHROPIC_KEY}"
-        }
-    }
+# iMessage agent is a CLI tool (bun run agent.ts --mode scan/inbox/run)
+# It does NOT implement MCP stdio protocol, so it is NOT wired as an MCP server.
+# Claude invokes it directly via Bash. No MCP entry needed.
 
 with open(mcp_path, "w") as f:
     json.dump(mcp, f, indent=2)
