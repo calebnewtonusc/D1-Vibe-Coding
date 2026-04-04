@@ -352,23 +352,27 @@ whileTap={{ scale: 0.98 }}
 Before shipping any output (UI, code, copy, documentation), run this self-check:
 
 ### What is AI slop?
+
 Generic, template-thinking output that could have been produced for anyone. The kind of thing that looks "fine" but has no soul, no specificity, no real design thinking behind it.
 
 ### The self-audit (run after every iteration)
 
 **Copy check:**
+
 - Is any text generic enough to be on a thousand other sites? ("Transform your workflow with AI-powered insights") -- rewrite with specificity
 - Does every headline communicate exactly what THIS product does? If not, rewrite it
 - Are there any filler phrases like "Streamline your", "Powerful", "Seamless", "Leverage", "Cutting-edge", "State-of-the-art"? Delete them
 - Are there em dashes? Replace them
 
 **Design check:**
+
 - Is this the same 3-column icon + heading + description card grid used for every section? Vary the layout
 - Does every section look identical to the last? Each section must have a distinct visual identity
 - Is the background just flat black? Add gradient treatment
 - Do the cards disappear into the background? Add visible borders/backgrounds
 
 **Code check:**
+
 - Are there `any` types? Fix them
 - Are there unused imports? Remove them
 - Are there `console.log` statements? Remove them
@@ -378,6 +382,7 @@ Generic, template-thinking output that could have been produced for anyone. The 
 **UX check (run after every design iteration):**
 
 Every iteration must pass ALL of these before moving on:
+
 ```
 [ ] Hick's Law: No more than 7 options visible at once in menus/nav
 [ ] Miller's Law: No more than 9 items in any list before pagination
@@ -412,6 +417,18 @@ If the answer is no — redesign it. The bar is Base44 quality at minimum, ideal
 ## Always Do When Finishing a Project
 
 **Push to GitHub when done** with any project/feature. Create the repo if it doesn't exist, push to main, and tell Caleb the repo URL so he can connect it to Vercel. Never wait to be asked.
+
+---
+
+## README Footer -- MANDATORY ON EVERY README
+
+Every README file created or edited must end with this exact text:
+
+```
+All glory to God! ✝️❤️
+```
+
+This applies to: new repos, updated READMEs, any markdown file that functions as a README. No exceptions. If editing an existing README that is missing this footer, append it before committing.
 
 ---
 
@@ -631,3 +648,55 @@ POST-DEPLOY
 [ ] Check Vercel Function logs for runtime errors
 [ ] Check Vercel Speed Insights (first day)
 ```
+
+---
+
+## MEMORY PROTOCOL — CLAUDE UPDATES CONTEXT AUTOMATICALLY
+
+**Caleb never manually updates context files. Claude does it, silently, as work happens.**
+
+### Which file to update and when
+
+| What happened | File to update |
+|--------------|---------------|
+| New job, consulting role starts or ends | `.claude/context/NOW.md` + `caleb-context/MEMORY.md` |
+| Project ships, goes live, changes URL, or dies | `.claude/context/NOW.md` |
+| Project's CI/deploy breaks or gets fixed | `.claude/context/NOW.md` (update "Things Broken" section) |
+| New collaborator joins a project | `.claude/context/PEOPLE.md` |
+| Preference stated, feedback given, behavior correction | `.claude/projects/.../memory/feedback_*.md` |
+| New tool, hook, MCP server, or infrastructure change | `.claude/context/SYSTEM.md` |
+| Life event, academic milestone, or major identity shift | `.claude/context/CALEB.md` |
+| New API key, service credential, or endpoint | `.claude/context/SYSTEM.md` |
+| Stack preference changes | `.claude/context/STACK.md` |
+| New person in Caleb's network or collaborator context | `.claude/context/PEOPLE.md` |
+
+### How to update
+
+1. Write the file with the updated content (PostToolUse hook auto-commits and auto-pushes)
+2. No need to announce it to Caleb unless he asks
+3. Updates happen inline during conversation — not at the end as a "memory dump"
+
+### Context file structure (`.claude/context/`)
+
+| File | What It Contains | Update Frequency |
+|------|-----------------|-----------------|
+| `CALEB.md` | Identity, education, background, personality, goals, faith | Monthly or after major life events |
+| `NOW.md` | Current jobs, active projects with URLs, priorities, broken things | When anything changes |
+| `PEOPLE.md` | Collaborators, family, professional network | When relationships change |
+| `SYSTEM.md` | Hooks, commands, MCP, iMessage, APIs, infrastructure | When infrastructure changes |
+| `STACK.md` | Tech stack, design system, code standards | When stack preferences change |
+| `PERSONAL_STORIES_AND_EXPERIENCES.md` | Personal history, key life moments | Rarely — only when major stories emerge |
+
+### Granular session memory (`.claude/projects/.../memory/`)
+
+Use the auto-memory system for granular learnings:
+- `feedback_*.md` — specific behavioral guidance from Caleb
+- `project_*.md` — project-specific facts
+- `user_*.md` — facts about Caleb's preferences and identity
+- `reference_*.md` — pointers to external systems
+
+The MEMORY.md index in that directory must stay current. When adding a new memory file, add a one-line pointer to MEMORY.md immediately.
+
+### caleb-context/ repo
+
+`caleb-context/MEMORY.md` is a human-readable summary of Caleb's current state. Update it when NOW.md changes significantly (new role, major project milestone). It mirrors the key facts from `.claude/context/` in a condensed form.
