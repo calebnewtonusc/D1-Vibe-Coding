@@ -4,14 +4,14 @@ Composio gives Claude access to 100+ tools via a single MCP server: GitHub, Gmai
 
 ## What you get
 
-| Category | Tools |
-|----------|-------|
-| Code | GitHub (create repos, PRs, issues, read code) |
-| Email | Gmail (read, send, search, draft) |
+| Category | Tools                                            |
+| -------- | ------------------------------------------------ |
+| Code     | GitHub (create repos, PRs, issues, read code)    |
+| Email    | Gmail (read, send, search, draft)                |
 | Calendar | Google Calendar (events, free slots, scheduling) |
-| Tasks | Todoist (create, complete, list tasks) |
-| Deploy | Vercel (deployments, projects, env vars) |
-| Docs | Google Docs, Sheets, Drive |
+| Tasks    | Todoist (create, complete, list tasks)           |
+| Deploy   | Vercel (deployments, projects, env vars)         |
+| Docs     | Google Docs, Sheets, Drive                       |
 
 ## Setup
 
@@ -49,6 +49,7 @@ Your API key is in your Composio dashboard under Settings → API Keys.
 ### 4. Connect your apps
 
 In the Composio dashboard, connect the services you want:
+
 - Click "Add Integration"
 - Select the app (GitHub, Gmail, etc.)
 - Authorize via OAuth or API key
@@ -87,6 +88,7 @@ Once Composio is connected, the SessionStart hook can inject Todoist priorities 
 ## Security
 
 Your Composio MCP URL is a credential — treat it like an API key:
+
 - Never commit it to a public repo
 - Store it in `~/.claude/settings.json` (not in project-level `.mcp.json` if the project is public)
 - Rotate it from the Composio dashboard if exposed

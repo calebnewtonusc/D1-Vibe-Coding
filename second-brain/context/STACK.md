@@ -39,6 +39,7 @@
 ## Design System
 
 See `CLAUDE.md` for the full design system. Summary:
+
 - Background: `zinc-950` or `#0a0a0a`
 - Accent: `indigo-500/600`
 - Cards: `bg-zinc-900 border border-zinc-800 rounded-2xl`

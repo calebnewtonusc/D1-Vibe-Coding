@@ -46,12 +46,12 @@ Replace `YOUR_TOKEN` with your actual token, or use `$TODOIST_API_TOKEN` if you 
 
 The D1 kit includes Todoist slash commands out of the box:
 
-| Command | What it does |
-|---------|-------------|
-| `/todo Buy groceries p1 today` | Add a task with natural language |
-| `/done fix auth bug` | Mark a task complete by name |
-| `/sprint` | Show today's task breakdown by priority |
-| `/daily-brief` | Today's tasks + GitHub PRs + a focused plan |
+| Command                        | What it does                                |
+| ------------------------------ | ------------------------------------------- |
+| `/todo Buy groceries p1 today` | Add a task with natural language            |
+| `/done fix auth bug`           | Mark a task complete by name                |
+| `/sprint`                      | Show today's task breakdown by priority     |
+| `/daily-brief`                 | Today's tasks + GitHub PRs + a focused plan |
 
 ## Label system (optional, but powerful)
 
@@ -69,9 +69,9 @@ Set this up in your session hook to only inject work tasks during work sessions.
 
 Todoist priorities map to Claude's urgency framing:
 
-| Todoist | Meaning | How Claude treats it |
-|---------|---------|---------------------|
-| p1 | Urgent | Surfaces first, flags if not addressed |
-| p2 | High | Included in sprint |
-| p3 | Normal | Included in brief |
-| p4 | Low | Background |
+| Todoist | Meaning | How Claude treats it                   |
+| ------- | ------- | -------------------------------------- |
+| p1      | Urgent  | Surfaces first, flags if not addressed |
+| p2      | High    | Included in sprint                     |
+| p3      | Normal  | Included in brief                      |
+| p4      | Low     | Background                             |

@@ -10,9 +10,9 @@ Full PR lifecycle: review → fix → quality gate → push → CI → merge.
 
 Parse `$ARGUMENTS`:
 
-- Extract PR number from bare number or URL
-- Flags: `--fix` (auto-fix), `--merge` (merge when CI green), `--review-only`
-- No PR given: `gh pr list --head $(git branch --show-current) --json number --jq '.[0].number'`
+- Extract PR number from bare number or `https://github.com/owner/repo/pull/123`
+- Flags: `--fix` (auto-fix without asking), `--merge` (merge when CI green), `--review-only` (stop after review)
+- If no PR: `gh pr list --head $(git branch --show-current) --json number --jq '.[0].number'`
 
 ---
 
@@ -21,8 +21,9 @@ Parse `$ARGUMENTS`:
 Gather in parallel:
 
 ```
-gh pr view {number} --json number,title,body,author,baseRefName,headRefName,state,isDraft,mergeable,files,additions,deletions,labels
+gh pr view {number} --json number,title,body,author,baseRefName,headRefName,headRefOid,state,isDraft,mergeable,mergeStateStatus,files,additions,deletions,labels
 gh pr diff {number}
+gh pr diff {number} --name-only
 gh pr checks {number} --json name,status,conclusion
 gh api --paginate repos/{owner}/{repo}/pulls/{number}/comments
 gh api --paginate repos/{owner}/{repo}/pulls/{number}/reviews
@@ -34,21 +35,28 @@ Print status card:
 PR #{number}: {title}
 Author: {author}    Base: {base} ← {head}
 Size: +{additions} -{deletions} across {file_count} files
-CI: {PASS|FAIL|PENDING}    Mergeable: {yes|no|conflict}
-Unresolved comments: {N}
+CI: {PASS|FAIL|PENDING|NONE}    Mergeable: {yes|no|conflict}
+Unresolved comments: {N}    Draft: {yes|no}
 ```
 
-Decide mode: comments → Phase 2a | no review → Phase 2b | CI failing → Phase 4 | all green → Phase 6
+Decide mode:
+
+- Unresolved review comments → Phase 2a
+- No reviews yet → Phase 2b (deep review)
+- CI failing only → Phase 4
+- All green + approved → Phase 6 (merge ready)
 
 ---
 
-## Phase 2a: Address Review Comments
+## Phase 2a: Address Existing Review Comments
 
 For each unresolved comment:
 
 1. Read the referenced code at file:line
-2. Classify: valid / already fixed / false positive / nit
-3. Build fix plan table
+2. Classify: ✅ valid & unresolved / ✅ already fixed / ❌ false positive / 🔧 nit
+3. Deduplicate (bots often duplicate)
+
+| # | Source | File:Line | Issue | Status | Planned Fix |
 
 Wait for confirmation (unless `--fix`), then Phase 3.
 
@@ -56,19 +64,31 @@ Wait for confirmation (unless `--fix`), then Phase 3.
 
 ## Phase 2b: Deep Review (6 Lenses)
 
-Read every changed file. Prioritize: service logic > handlers > types > tests > docs.
+Read EVERY changed file in full. Prioritize: service logic > handlers > types > tests > docs.
 
-**Correctness** — off-by-one, wrong operators, unreachable code, type confusion, error propagation
+### Correctness
 
-**Edge cases** — null/undefined, service failures, boundaries, malformed input
+Off-by-one, wrong operators, inverted conditions, unreachable code, type confusion, error propagation, TOCTOU races.
 
-**Security** — auth bypass, IDOR, injection, data leakage, replay attacks
+### Edge cases & failure handling
 
-**Tests** — new public functions tested? error paths? edge cases?
+Empty/null/undefined, external service failures, integer boundaries, malformed input, partial failures.
 
-**Architecture** — follows patterns? duplicate logic? clean boundaries?
+### Security
 
-Findings table: `| # | Severity | Category | File:Line | Finding | Suggested Fix |`
+Auth/authz bypass, IDOR, injection (SQL/command/log), data leakage in logs/errors, resource exhaustion, replay attacks.
+
+### Test coverage
+
+New public functions tested? Error paths? Edge cases? Existing tests still valid?
+
+### Architecture
+
+Follows patterns? Unnecessary abstractions? Duplicated logic? Clean boundaries?
+
+**Findings table:**
+
+| # | Severity | Category | File:Line | Finding | Suggested Fix |
 
 Severity: Critical > High > Medium > Low > Nit
 
@@ -76,18 +96,23 @@ Severity: Critical > High > Medium > Low > Nit
 
 ## Phase 3: Fix
 
+Check out PR branch: `gh pr checkout {number}`
+
+Implement fixes. After all fixes, run quality gate:
+
 ```bash
-gh pr checkout {number}
 npm run typecheck 2>/dev/null || npx tsc --noEmit
 npm run lint 2>/dev/null || npx eslint . --max-warnings 0
 npm test
 ```
 
-Loop up to 3 times. Stop and report if still failing.
+If any step fails: fix and re-run. Loop up to 3 times. Stop and report if still failing.
 
 ---
 
 ## Phase 4: Commit & Push
+
+Stage by file name (never `git add -A`):
 
 ```bash
 git add path/to/file1 path/to/file2
@@ -95,34 +120,41 @@ git commit -m "fix: address review findings on PR #{number}"
 git push origin {headRefName}
 ```
 
-Reply to addressed comments on GitHub with commit SHA.
+Reply to addressed review comments on GitHub with commit SHA and description.
 
 ---
 
 ## Phase 5: CI Monitor
 
-Poll every 30s, up to 10 minutes:
+Poll (don't use `--watch`):
 
 ```
 gh pr checks {number} --json name,status,conclusion
 ```
 
-If CI fails (up to 3 attempts): view logs, diagnose, fix, push, repeat.
+Re-check every 30s, up to 10 minutes.
+
+If CI fails (up to 3 attempts):
+
+1. `gh run view {run_id} --log-failed`
+2. Diagnose, fix, re-run quality gate, push
+3. Go back to top of Phase 5
 
 ---
 
 ## Phase 6: Merge
 
-If `--merge` or user confirms, all conditions met:
+Print final status. If `--merge` or user confirms and all conditions met (CI pass, no CHANGES_REQUESTED, not draft, no conflicts):
 
 ```
-gh pr merge {number} --squash --delete-branch
+gh pr merge {number} --{squash|rebase|merge} --delete-branch
 ```
 
 ---
 
 ## Rules
 
-- Read before judging. No findings without reading the code.
-- Fix the pattern, not just the instance.
+- Read before judging. No comments without reading the code.
+- Fix the pattern, not just the instance — grep for similar bugs across the codebase.
 - Don't over-fix. Only change what was flagged.
+- Distinguish certainty: "this IS a bug" vs "this COULD be a bug if X".

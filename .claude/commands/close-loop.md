@@ -1,11 +1,11 @@
 ---
-description: End-of-session wrap-up — commit staged changes, push to GitHub, log what was done
+description: End-of-session wrap-up — commit staged changes, push to GitHub, log what was done, prep for next session
 allowed-tools: Bash(git:*), Bash(gh:*), Bash(date:*), Read, Edit, Write, Glob
 ---
 
 # Close Loop
 
-End-of-session ritual. Commit, push, log, set up tomorrow.
+End-of-session workflow. Commit, push, log, set up tomorrow.
 
 ## Step 1: Check git state
 
@@ -14,62 +14,78 @@ git status
 git diff --stat HEAD
 ```
 
-Report: modified, staged, untracked.
+Report: files modified, staged, untracked that might matter.
 
-## Step 2: .env leak check
+## Step 2: Check for .env leaks before committing
 
 ```bash
-git diff --cached --name-only | grep -E "^\.env|\.env\." && echo "WARNING: .env staged!" || echo "Clean"
+git diff --cached --name-only | grep -E "^\.env|\.env\." && echo "WARNING: .env file staged!" || echo "No .env files staged"
 ```
 
-If `.env` is staged — STOP and unstage immediately.
+If any `.env` file is staged — STOP and unstage it immediately:
 
-## Step 3: Commit
+```bash
+git reset HEAD .env
+```
+
+## Step 3: Commit anything uncommitted
 
 If there are staged or unstaged changes:
 
-1. Show diff summary
-2. Stage by filename — never `git add -A`
-3. Commit with a meaningful message
+1. Show the diff summary
+2. Stage specific files by name — never `git add -A` or `git add .`
+3. Commit with a meaningful message (no Co-Authored-By lines):
 
-## Step 4: Push
+```bash
+git add {specific files}
+git commit -m "feat: {what was built/fixed}"
+```
+
+If changes span multiple project branches (submodules), handle each separately.
+
+## Step 4: Push to GitHub
+
+After committing, push:
 
 ```bash
 git push origin main
 ```
 
-If remote doesn't exist:
+If the remote doesn't exist yet:
 
 ```bash
-GITHUB_USER=$(gh api user --jq .login)
-gh repo create $GITHUB_USER/{repo-name} --private --source=. --push
+gh repo create calebnewtonusc/{repo-name} --private --source=. --push
 ```
 
 Share the GitHub URL.
 
-## Step 5: What was accomplished?
+## Step 5: What did we accomplish?
+
+List in plain English:
 
 - What was built or fixed
 - What files changed
-- Open TODOs or unfinished threads
+- Any open TODOs or unfinished threads
 
-## Step 6: Activity log
+## Step 6: Append to activity log
 
-If a session log exists (e.g., `ACTIVITY_LOG.md`), append:
+If `.claude/context/ACTIVITY_LOG.md` exists, append:
 
 ```markdown
 ### {YYYY-MM-DD} — {1-line session title}
 
-- {what was done}
-- {important decisions}
-- {what's left}
+- {bullet of what was done}
+- {any important decisions}
+- {what's left / follow-up}
 ```
 
-## Step 7: Next session
+If the file doesn't exist, create it with this entry as the first record.
+
+## Step 7: Next session setup
 
 State clearly:
 
-- The 1 thing that must happen next session
+- The 1 thing that absolutely needs to happen next session
 - Any context that would be lost without noting it
 
-Brief. This is a ritual, not a report.
+Keep the whole output brief. This is a ritual, not a report.

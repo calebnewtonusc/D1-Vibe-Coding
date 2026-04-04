@@ -1,85 +1,48 @@
+---
+paths:
+  - "projects/**/*.ts"
+  - "projects/**/*.tsx"
+  - "projects/**/*.js"
+  - "projects/**/*.py"
+---
+
 # Security Rules
 
-## Never hardcode secrets
+## SQL / database
 
-```ts
-// Bad
-const client = new Anthropic({ apiKey: "sk-ant-..." });
+- **Never interpolate user input into SQL** — always use parameterized queries (Supabase `.eq()` / `.filter()`, pg `$1` params, never string interpolation in raw queries).
+- Multi-step DB operations (insert+insert, update+delete, read-modify-write) must use transactions.
 
-// Good
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-```
+## Secrets and credentials
 
-All secrets go in `.env` locally, in Vercel dashboard for production. `.env` must be in `.gitignore`.
+- **Never log secrets, tokens, passwords, or PII** — not even at `debug` level.
+- Secrets live in env vars only. Never commit `.env` files. Document all required vars in `.env.example`.
+- Redact sensitive fields before logging or broadcasting to SSE/WebSocket.
 
-## Validate all user input with Zod
+## Authentication and authorization
 
-```ts
-const schema = z.object({
-  userId: z.string().uuid(),
-  content: z.string().min(1).max(10000),
-});
-const result = schema.safeParse(body);
-if (!result.success) return 400;
-```
+- **Never trust user-supplied IDs without ownership verification** — always join on the authenticated user's ID.
+- Validate all user-supplied IDs server-side before acting on them.
+- Destructive operations require explicit confirmation or re-auth.
 
-Never trust `req.body` raw. Parse and validate before touching a database.
+## Input handling
 
-## Parameterized queries — never string interpolation
+- Type external data as `unknown` and narrow before use — never `as any` on untrusted input.
+- `dangerouslySetInnerHTML` only with a sanitizer (DOMPurify) — never with raw user content.
+- No `eval()` or `new Function()` with user-supplied strings.
 
-```ts
-// Bad — SQL injection
-const data = await db.query(`SELECT * FROM users WHERE id = '${userId}'`);
+## Network / SSRF prevention
 
-// Good — parameterized
-const data = await db.query("SELECT * FROM users WHERE id = $1", [userId]);
-```
+- Validate URLs from user input: resolve DNS first, then check the resolved IP is not loopback/private (`127.x`, `10.x`, `192.168.x`, `169.254.x`).
+- HTTP allowlists for outbound requests in agent/automation code.
 
-## Auth checks before every sensitive operation
+## Pre-merge security checklist
 
-```ts
-const {
-  data: { user },
-} = await supabase.auth.getUser();
-if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+Before merging any PR that touches auth, payments, data access, or external calls:
 
-// Also check ownership — not just authentication
-const post = await getPost(postId);
-if (post.userId !== user.id) return 403;
-```
-
-## Never expose internal errors to the client
-
-```ts
-// Bad
-return NextResponse.json({ error: err.stack }, { status: 500 });
-
-// Good
-console.error("[POST /api/posts]", err);
-return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-```
-
-## Content Security Policy
-
-For `dangerouslySetInnerHTML` — only use with sanitized content:
-
-```ts
-import DOMPurify from "dompurify";
-<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userContent) }} />
-```
-
-## Pre-commit secret scan
-
-```bash
-git diff --cached | grep -E "^\+(sk-ant|sk-proj|ghp_|eyJhbGci|ANTHROPIC_API_KEY)" | grep -v "example\|placeholder\|process\.env"
-```
-
-Block any commit that surfaces real secrets.
-
-## Never Do These
-
-- Never log PII (emails, tokens, passwords) at any log level
-- Never use `eval()` or `new Function()` with user-supplied strings
-- Never trust user-supplied IDs without ownership verification
-- Never disable HTTPS
-- Never use MD5 for password hashing — use bcrypt or Argon2
+- [ ] No secrets in source or logs
+- [ ] User-supplied IDs verified against authenticated session
+- [ ] SQL uses parameterized queries
+- [ ] `dangerouslySetInnerHTML` absent or sanitized
+- [ ] Outbound HTTP validates destination
+- [ ] Error messages don't leak stack traces or internal paths to the client

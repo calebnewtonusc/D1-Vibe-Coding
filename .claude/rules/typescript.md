@@ -1,103 +1,161 @@
+---
+paths:
+  - "**/*.ts"
+  - "**/*.tsx"
+---
+
 # TypeScript Rules
 
-## Strict mode — always
+**Run `tsc --noEmit` before declaring anything done.** Zero errors is the bar — not "it mostly works".
 
-```json
-{
-  "compilerOptions": {
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true
-  }
+**Strict mode is assumed.** `strict: true` is set in all tsconfigs. Honor it.
+
+**No implicit `any`.** If a value is coming from an external source (API response, JSON parse, `req.body`), type it as `unknown` and narrow with a type guard or Zod schema.
+
+---
+
+## Supabase Patterns
+
+**Typed client — always use generated types:**
+
+```typescript
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/supabase";
+
+const supabase = createClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
+```
+
+**Server-side (App Router) — use `createServerClient`:**
+
+```typescript
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+
+export function createSupabaseServer() {
+  const cookieStore = cookies();
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { get: (name) => cookieStore.get(name)?.value } },
+  );
 }
 ```
 
-## No `any` — use `unknown` + narrow
+**Type-safe queries — destructure the data, narrow the error:**
 
-```ts
-// Bad
-function parse(input: any) {
-  return input.value;
+```typescript
+const { data, error } = await supabase
+  .from("projects")
+  .select("*")
+  .eq("id", id)
+  .single();
+if (error) throw new Error(error.message);
+// data is typed from Database
+```
+
+**Generate types after schema changes:**
+
+```bash
+npx supabase gen types typescript --project-id <id> > src/types/supabase.ts
+```
+
+---
+
+## Zod Patterns
+
+**Every API route body must be Zod-validated:**
+
+```typescript
+import { z } from "zod";
+
+const schema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  role: z.enum(["admin", "user"]),
+});
+
+const parsed = schema.safeParse(req.body);
+if (!parsed.success) {
+  return Response.json({ error: parsed.error.flatten() }, { status: 400 });
+}
+```
+
+**Infer types from schemas — don't duplicate:**
+
+```typescript
+type CreateProjectInput = z.infer<typeof createProjectSchema>;
+```
+
+---
+
+## App Router Patterns
+
+**Server Components are default** — only opt into `"use client"` when you need:
+
+- `useState`, `useEffect`, event handlers
+- browser APIs
+- Framer Motion animations
+
+**Typed page params:**
+
+```typescript
+interface PageProps {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-// Good
-function parse(input: unknown) {
-  if (typeof input === "object" && input !== null && "value" in input) {
-    return (input as { value: string }).value;
-  }
-  throw new Error("Invalid input");
+export default function Page({ params }: PageProps) {
+  // ...
 }
 ```
 
-## No non-null assertions without comment
+**Metadata export (every page):**
 
-```ts
-// Bad
-const user = getUser()!;
-
-// Good
-const user = getUser();
-if (!user) throw new Error("User not found");
-
-// Acceptable when truly guaranteed
-const el = document.getElementById("app")!; // guaranteed by HTML template
-```
-
-## Type external data as `unknown`
-
-```ts
-// Bad
-const data = (await res.json()) as User;
-
-// Good
-const raw: unknown = await res.json();
-const data = UserSchema.parse(raw); // Zod validates and infers
-```
-
-## Prefer `type` over `interface` for object shapes
-
-Use `interface` only when you need declaration merging (e.g., extending third-party types).
-
-```ts
-type User = {
-  id: string;
-  email: string;
-  createdAt: Date;
+```typescript
+export const metadata: Metadata = {
+  title: "Page Title",
+  description: "Page description",
 };
 ```
 
-## Avoid type assertions — parse instead
+---
 
-```ts
-// Bad
-const config = JSON.parse(raw) as Config;
+## Utility Types — Use These
 
-// Good
-import { z } from "zod";
-const Config = z.object({ apiUrl: z.string(), timeout: z.number() });
-const config = Config.parse(JSON.parse(raw));
+```typescript
+// Pick specific fields
+type ProjectPreview = Pick<Project, "id" | "name" | "created_at">;
+
+// Make nullable fields required
+type RequiredProject = Required<Project>;
+
+// Partial for update payloads
+type UpdatePayload = Partial<Pick<Project, "name" | "description">>;
+
+// Non-nullable
+type NonNullId = NonNullable<Project["id"]>;
 ```
 
-## Exhaustive switch statements
+---
 
-```ts
-function assertNever(x: never): never {
-  throw new Error(`Unhandled case: ${x}`);
-}
+## Import Order
 
-switch (status) {
-  case "active":
-    return handleActive();
-  case "inactive":
-    return handleInactive();
-  default:
-    return assertNever(status); // compile error if new case added
-}
-```
+1. Node built-ins
+2. External packages (react, next, etc.)
+3. Internal absolute (`@/components/...`)
+4. Internal relative (`../`, `./`)
 
-## Never Do These
+**Never use `require()` in TypeScript files** — use ESM `import`.
 
-- `as any` — ever
-- `@ts-ignore` without an explanatory comment on the same line
-- Returning `any` from public functions
-- Mutating function parameters
+---
+
+## What NOT to Do
+
+- `as any` — use `unknown` + type guard instead
+- `!` non-null assertion on values that could genuinely be null — check first
+- Separate interface and type when one will do — pick one style and stick to it
+- `Object.keys(x).forEach` when you want `Object.entries(x)` — be explicit
+- Casting `req.params as any` — type the route generics properly

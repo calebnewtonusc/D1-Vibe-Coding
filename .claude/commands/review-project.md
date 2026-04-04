@@ -1,80 +1,110 @@
 ---
-description: Deep audit a project directory — bugs, incomplete work, security issues, inconsistencies
+description: Deep audit a project directory — find bugs, incomplete work, security issues, and inconsistencies
 allowed-tools: Read, Glob, Grep, Bash(git log:*), Bash(npm:*), Bash(npx tsc:*)
-argument-hint: "<project path>"
+argument-hint: "<project path, e.g. projects/mergepilot/web>"
 ---
 
 # Project Audit
 
 ## Step 1: Locate the project
 
-Use `$ARGUMENTS` if given, otherwise current directory. Confirm a valid project (package.json, pyproject.toml, etc.).
+If `$ARGUMENTS` is given, use that path. Otherwise, use the current directory. Confirm it's a valid project by checking for `package.json`, `pyproject.toml`, or equivalent.
 
 ## Step 2: Understand the project
 
-Read: package.json, README.md, top-level source files. Build a mental map before diving in.
+Read:
 
-Do NOT comment on code you haven't read.
+- `package.json` / `pyproject.toml` — dependencies, scripts, entry points
+- `README.md` — stated purpose and architecture
+- Top-level source files — build a mental map before diving in
 
-## Step 3: Compiler/type checks
+Do NOT comment on what you haven't read.
+
+## Step 3: Run compiler/type checks (read-only output)
 
 ```bash
+# TypeScript
 npx tsc --noEmit
-python3 -m mypy . --ignore-missing-imports 2>&1 | head -50
+
+# Python
+python -m mypy . --ignore-missing-imports 2>&1 | head -50
 ```
 
-Document all errors. Don't fix yet.
+Document all errors. Do not fix yet.
 
 ## Step 4: Scan for incomplete work
 
-Search for: `TODO, FIXME, HACK, XXX, unimplemented, placeholder, stub, @ts-ignore, @ts-expect-error`
+Search for:
 
-Any in production code paths is a finding.
+```
+TODO, FIXME, HACK, XXX, unimplemented, placeholder, stub, temporary, @ts-ignore, @ts-expect-error
+```
+
+Any `TODO`/`FIXME` in production code paths is a finding.
 
 ## Step 5: Security audit
 
-- SQL injection: string interpolation in queries
+Check for:
+
+- SQL injection: string interpolation in queries (should use parameterized queries)
 - Secrets in source: hardcoded API keys, tokens, passwords
 - `eval()` / `Function()` with user-supplied input
-- Missing auth checks on sensitive routes
+- Missing authentication checks on sensitive routes
 - `dangerouslySetInnerHTML` with unsanitized content
 - PII logged at any level
 - User-supplied IDs trusted without ownership verification
 
 ## Step 6: TypeScript safety
 
-- `as any` without explanatory comment
-- Non-null assertions (`!`) on potentially null values
+Check for:
+
+- `as any` without an explanatory comment
+- Non-null assertions (`!`) on values that could be null/undefined
 - `@ts-ignore` without explanation
-- External data typed as `any` instead of `unknown`
+- External data typed as `any` instead of `unknown` + narrowed
 
 ## Step 7: Async correctness
 
-- `await` inside a loop when calls are independent (use `Promise.all`)
+Check for:
+
+- `await` inside a loop when calls are independent (should be `Promise.all`)
 - Fire-and-forget Promises without `.catch()`
-- Mixed `async/await` and `.then()/.catch()` in the same function
+- Mixed `async/await` and `.then()/.catch()` chains in the same function
 
-## Step 8: Consistency
+## Step 8: Consistency review
 
-- Dead code (exported but never imported)
-- Duplicate logic across files
+Check for:
+
+- Dead code (exported but never imported, unreachable branches)
+- Duplicate logic across files (near-identical functions)
 - Naming inconsistencies (camelCase vs snake_case for same concept)
-- Env variables used but not in `.env.example`
+- Env variables used but not documented in `.env.example`
 
 ## Step 9: Findings report
 
-Group by severity: **Critical** | **High** | **Medium** | **Low** | **Nit**
+Group by severity:
+
+**Critical** — will cause data loss, security breach, or crash in production
+**High** — bug that breaks a feature or creates incorrect behavior
+**Medium** — correctness risk, missing edge case handling
+**Low** — style, naming, missing docs
+**Nit** — very minor
 
 For each finding:
 
 ```
 [SEVERITY] file:line
-Category: Security | TypeScript | Async | Incomplete | Consistency
+Category: (Security | TypeScript | Async | Incomplete | Consistency)
 Issue: <what's wrong>
-Evidence: <exact code>
+Evidence: <exact code or pattern>
 Fix: <what to do>
 ```
 
-Summary table with count per severity.
+End with a summary table and total count per severity.
 
-Rules: Read every file you cite. Never report without file:line evidence. Read-only — don't implement fixes unless asked.
+## Rules
+
+- Read every file you cite before reporting a finding.
+- Never report a finding without specific file:line evidence.
+- Distinguish confirmed bugs from conditional risks.
+- This is a read-only audit — do not implement fixes unless the user explicitly asks.

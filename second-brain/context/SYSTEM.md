@@ -13,19 +13,19 @@
 
 ## Key APIs
 
-| Service | Env Var | Notes |
-|---------|---------|-------|
-| Anthropic | `ANTHROPIC_API_KEY` | Claude API |
-| GitHub | `GITHUB_TOKEN` | Needs repo + workflow scopes |
-| Todoist | `TODOIST_API_TOKEN` | For /daily-brief, /sprint, /todo |
-| Vercel | `VERCEL_TOKEN` | For /deploy |
+| Service   | Env Var             | Notes                            |
+| --------- | ------------------- | -------------------------------- |
+| Anthropic | `ANTHROPIC_API_KEY` | Claude API                       |
+| GitHub    | `GITHUB_TOKEN`      | Needs repo + workflow scopes     |
+| Todoist   | `TODOIST_API_TOKEN` | For /daily-brief, /sprint, /todo |
+| Vercel    | `VERCEL_TOKEN`      | For /deploy                      |
 
 ## Deploy Infrastructure
 
 | Project | Platform | URL |
-|---------|----------|-----|
-| ... | Vercel | ... |
-| ... | Railway | ... |
+| ------- | -------- | --- |
+| ...     | Vercel   | ... |
+| ...     | Railway  | ... |
 
 ## MCP Servers Active
 

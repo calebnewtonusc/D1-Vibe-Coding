@@ -23,44 +23,48 @@ Before staging anything:
 
 ```bash
 git diff --stat HEAD | grep -E "\.env" && echo "WARNING: .env file modified" || echo "No .env files"
-git diff HEAD -- | grep -E "^\+(sk-ant|sk-|ANTHROPIC|API_KEY|SECRET|PASSWORD|TOKEN)" | grep -v "process\.env\." | grep -v "example\|placeholder" | head -5
+git diff HEAD -- | grep -E "^\\+(sk-ant|sk-|ANTHROPIC|API_KEY|SECRET|PASSWORD|TOKEN)" | grep -v "process\.env\." | grep -v "example\|placeholder" | head -5
 ```
 
-If any real secrets appear in the diff — **STOP** and do not commit.
+If any real secrets appear in the diff — **STOP**, warn Caleb, do not commit.
 
-## Step 3: Stage by filename
+## Step 3: Determine what to stage
 
 Look at modified files. For each:
 
 - Source files (.ts, .tsx, .py, .js, etc.) — stage
 - Config files (package.json, tsconfig.json, vercel.json, etc.) — stage
-- .env files — DO NOT stage, warn the user
+- .env files — DO NOT stage, warn Caleb
 - node_modules, .next, dist, **pycache** — skip entirely
+
+Stage by filename:
 
 ```bash
 git add {file1} {file2} {file3}
 ```
 
-## Step 4: Commit message
+## Step 3b: Generate commit message
 
-If `$ARGUMENTS` is provided, use it.
+If $ARGUMENTS is provided, use it as the commit message.
 
-Otherwise analyze the diff and write one:
+Otherwise, analyze the diff and write a commit message following the convention:
 
-- `feat: {new capability}`
+- `feat: {new capability added}`
 - `fix: {what was broken and how}`
 - `chore: {maintenance, config, refactor}`
 - `docs: {documentation change}`
 
-## Step 5: Commit and push
+No Co-Authored-By lines. Never.
+
+## Step 4: Commit and push
 
 ```bash
-git commit -m "{message}"
+git commit -m "{generated or provided message}"
 git push
 ```
 
 If no upstream: `git push -u origin main`
 
-## Step 6: Report
+## Step 5: Report
 
-Show the commit hash and GitHub URL.
+Show the commit hash and GitHub URL. If it's a new repo, remind Caleb to connect to Vercel.

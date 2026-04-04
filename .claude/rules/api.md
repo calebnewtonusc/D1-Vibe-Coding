@@ -1,9 +1,10 @@
 # API Rules
 
-## Next.js App Router structure
+## Always Use Next.js App Router API Routes
+
+Structure: `app/api/{resource}/route.ts`
 
 ```ts
-// app/api/{resource}/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -20,7 +21,9 @@ export async function GET(req: NextRequest) {
 }
 ```
 
-## Always validate with Zod
+## Validation — Always Use Zod
+
+Never trust `req.body` or `req.json()` raw. Parse and validate with Zod:
 
 ```ts
 import { z } from "zod";
@@ -36,7 +39,9 @@ if (!body.success) {
 }
 ```
 
-## Consistent response shapes
+## Error Response Format
+
+Always return consistent error shapes:
 
 ```ts
 // Success
@@ -46,21 +51,48 @@ if (!body.success) {
 { error: string, details?: unknown }
 ```
 
-## HTTP status codes
+## HTTP Status Codes
 
-| Code | Use case                      |
-| ---- | ----------------------------- |
-| 200  | GET/PATCH success             |
-| 201  | POST that creates a resource  |
-| 204  | DELETE success                |
-| 400  | Validation failure            |
-| 401  | Not authenticated             |
-| 403  | Authenticated but not allowed |
-| 404  | Not found                     |
-| 409  | Conflict / duplicate          |
-| 500  | Internal server error         |
+- `200` OK (GET/PATCH success)
+- `201` Created (POST that creates a resource)
+- `204` No Content (DELETE success)
+- `400` Bad Request (validation failure)
+- `401` Unauthorized (not authenticated)
+- `403` Forbidden (authenticated but not allowed)
+- `404` Not Found
+- `409` Conflict (duplicate)
+- `500` Internal Server Error
 
-## Anthropic API
+## Authentication
+
+Use Supabase server client for auth in API routes:
+
+```ts
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+
+const supabase = createServerClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    cookies: {
+      getAll() {
+        return cookies().getAll();
+      },
+      setAll() {},
+    },
+  },
+);
+
+const {
+  data: { user },
+} = await supabase.auth.getUser();
+if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+```
+
+## Anthropic API Integration
+
+Default model: `claude-sonnet-4-6`. Fast/cheap: `claude-haiku-4-5-20251001`. Best: `claude-opus-4-6`.
 
 ```ts
 import Anthropic from "@anthropic-ai/sdk";
@@ -68,22 +100,28 @@ import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const message = await client.messages.create({
-  model: "claude-sonnet-4-6", // default
-  // "claude-haiku-4-5-20251001" — fast/cheap
-  // "claude-opus-4-6"           — best
+  model: "claude-sonnet-4-6",
   max_tokens: 1024,
   messages: [{ role: "user", content: prompt }],
 });
 ```
 
-Streaming:
+## Streaming Responses
 
 ```ts
 const stream = await client.messages.stream({ model: "claude-sonnet-4-6", ... });
+
 return new Response(stream.toReadableStream(), {
   headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" },
 });
 ```
+
+## Environment Variables
+
+- Never hardcode secrets — always `process.env.VAR_NAME`
+- Client-safe vars: prefix `NEXT_PUBLIC_`
+- Always add to `.env.example` with placeholder values
+- Never commit `.env`
 
 ## Never Do These
 
@@ -91,4 +129,3 @@ return new Response(stream.toReadableStream(), {
 - Never log raw request bodies containing passwords or tokens
 - Never use `any` type in route handlers
 - Never skip validation on user-provided input
-- Never hardcode secrets — always `process.env.VAR_NAME`

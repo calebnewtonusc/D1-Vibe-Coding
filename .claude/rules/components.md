@@ -1,16 +1,25 @@
 # Component Rules
 
-## shadcn/ui first — never build primitives from scratch
+## Always Use shadcn/ui — Never Build Primitives From Scratch
 
-Before writing any UI component:
+Before writing any UI component, check if shadcn/ui has it:
 
 ```bash
-npx shadcn@latest add button dialog input select card toast dropdown-menu tabs badge skeleton
+npx shadcn@latest add button
+npx shadcn@latest add dialog
+npx shadcn@latest add input
+npx shadcn@latest add select
+npx shadcn@latest add card
+npx shadcn@latest add toast
+npx shadcn@latest add dropdown-menu
+npx shadcn@latest add tabs
+npx shadcn@latest add badge
+npx shadcn@latest add skeleton
 ```
 
-Only build custom if shadcn doesn't have it.
+Only build custom components for things shadcn/ui doesn't cover.
 
-## Component file structure
+## Component File Structure
 
 ```ts
 // 1. Imports
@@ -26,15 +35,30 @@ interface UserCardProps {
 
 // 3. Component
 export function UserCard({ user, onEdit }: UserCardProps) {
+  // 4. State and hooks at top
   const [isExpanded, setIsExpanded] = useState(false);
-  const displayName = `${user.firstName} ${user.lastName}`;
+
+  // 5. Derived values
+  const displayName = user.firstName + " " + user.lastName;
+
+  // 6. Handlers
   const handleEdit = () => onEdit?.(user.id);
+
+  // 7. Early returns for loading/error/empty
   if (!user) return null;
-  return <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">...</div>;
+
+  // 8. Render
+  return (
+    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+      {/* ... */}
+    </div>
+  );
 }
 ```
 
-## Skeleton loaders — required for every async component
+## Skeleton Loaders — Required for Every Async Component
+
+Never show blank space while loading. Every component that fetches data needs a skeleton:
 
 ```tsx
 export function UserCardSkeleton() {
@@ -47,7 +71,9 @@ export function UserCardSkeleton() {
 }
 ```
 
-## Empty states — required for every list component
+## Empty States — Required for Every List Component
+
+Never show nothing when a list is empty:
 
 ```tsx
 export function EmptyState({ title, description, action }: EmptyStateProps) {
@@ -64,7 +90,7 @@ export function EmptyState({ title, description, action }: EmptyStateProps) {
 }
 ```
 
-## Error states
+## Error States
 
 ```tsx
 export function ErrorMessage({
@@ -90,11 +116,52 @@ export function ErrorMessage({
 }
 ```
 
-## Icons — Lucide React only
+## Toast Notifications
+
+Use shadcn/ui `useToast` — never build custom toast:
 
 ```tsx
-import { Loader2, Zap } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
+const { toast } = useToast();
+
+// Success
+toast({ title: "Saved!", description: "Your changes have been saved." });
+
+// Error
+toast({ title: "Error", description: err.message, variant: "destructive" });
+```
+
+## Modal / Dialog Pattern
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+<Dialog>
+  <DialogTrigger asChild>
+    <Button>Open</Button>
+  </DialogTrigger>
+  <DialogContent className="bg-zinc-900 border-zinc-800">
+    <DialogHeader>
+      <DialogTitle>Title</DialogTitle>
+    </DialogHeader>
+    {/* content */}
+  </DialogContent>
+</Dialog>;
+```
+
+## Icons — Lucide React Only
+
+```tsx
+import { Loader2, Check, X, ChevronRight, ArrowRight } from "lucide-react";
+
+// Loading spinner
 <Loader2 className="w-4 h-4 animate-spin" />
 
 // Feature icon with colored bubble
@@ -103,10 +170,32 @@ import { Loader2, Zap } from "lucide-react";
 </div>
 ```
 
+Never use emoji as icons. Never use text characters (→, ×) as icons.
+
+## Component Composition
+
+Prefer composition over props drilling:
+
+```tsx
+// Bad — prop drilling
+<Card title="..." description="..." footer="..." icon="..." />
+
+// Good — composition
+<Card>
+  <Card.Header>
+    <Card.Icon><Zap /></Card.Icon>
+    <Card.Title>Title</Card.Title>
+  </Card.Header>
+  <Card.Body>Description</Card.Body>
+  <Card.Footer>...</Card.Footer>
+</Card>
+```
+
 ## Never Do These
 
-- Never build custom button, input, dialog, select, dropdown — use shadcn/ui
+- Never build a custom button, input, dialog, select, or dropdown — use shadcn/ui
 - Never use inline styles — Tailwind only
 - Never render `null` on error — show an error state
 - Never render nothing on empty — show an empty state
-- Never forget loading state on async components
+- Never forget loading state on any async component
+- Never put business logic inside JSX — extract to handlers or hooks

@@ -6,29 +6,32 @@ argument-hint: "<idea or note>"
 
 # Scratchpad
 
-Capture `$ARGUMENTS` as a quick idea. Fast, no friction.
+Capture $ARGUMENTS as a quick idea. Fast, no friction.
 
 ## Step 1: Categorize
 
 Determine if this is:
 
-- A **project idea** → Todoist task, low priority
-- An **action item** → Todoist task in appropriate sprint/label
-- A **note/insight** → memory only
+- A **project idea** → Todoist task in Sprint 5, label "Idea"
+- An **action item** → Todoist task in appropriate sprint
+- A **note/insight** → Save to memory only
 - A **reminder** → Todoist with due date
 
 ## Step 2: Add to Todoist
 
 ```bash
 curl -sf -X POST "https://api.todoist.com/rest/v2/tasks" \
-  -H "Authorization: Bearer $TODOIST_API_TOKEN" \
+  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e" \
   -H "Content-Type: application/json" \
   -d '{"content": "[IDEA] {content}", "priority": 1}'
 ```
 
 ## Step 3: For significant ideas
 
-If the idea relates to an existing project or is a strategic insight, note it in the relevant context file or create a quick memory entry.
+If the idea relates to an existing project or is a meaningful strategic insight, also note it in:
+
+- The relevant project memory file if one exists
+- Or create a quick note in CURRENT_CONTEXT
 
 ## Step 4: Confirm
 

@@ -1,11 +1,11 @@
 ---
-description: Morning briefing — Todoist tasks for today, GitHub PRs/issues, focused daily plan
-allowed-tools: Bash(gh:*), Bash(curl:*), Bash(date:*), Read
+description: Morning briefing — Todoist tasks for today, GitHub PRs/issues needing attention, and a focused plan for the day
+allowed-tools: Bash(gh:*), Bash(curl:*), Bash(date:*), Bash(cat:*), Bash(ls:*), Read
 ---
 
 # Daily Brief
 
-Pull live data. Synthesize a focused daily plan. Signal over noise.
+Assemble Caleb's morning briefing. Pull live data, synthesize a focused daily plan. Signal over noise.
 
 ## Step 1: Today's date
 
@@ -16,14 +16,16 @@ date '+%A, %B %-d, %Y'
 ## Step 2: Todoist — today's tasks + overdue
 
 ```bash
+# Today's tasks
 curl -sf "https://api.todoist.com/rest/v2/tasks?filter=today" \
   -H "Authorization: Bearer $TODOIST_API_TOKEN"
 
+# Overdue tasks
 curl -sf "https://api.todoist.com/rest/v2/tasks?filter=overdue" \
   -H "Authorization: Bearer $TODOIST_API_TOKEN"
 ```
 
-Group by label/project. Priority order (P1 first). Count total tasks.
+Group by sprint label (Sprint 1-5). Priority order within each sprint (P1 first). Count total tasks.
 
 ## Step 3: GitHub — PRs and issues
 
@@ -32,7 +34,11 @@ gh pr list --author "@me" --state open --json number,title,updatedAt,reviewDecis
 gh issue list --assignee "@me" --state open --json number,title,updatedAt --limit 10
 ```
 
-## Step 4: Synthesize
+## Step 4: Current context
+
+Read `/Users/joelnewton/Desktop/2026-Code/.claude/context/CURRENT_CONTEXT_MAR_2026.md` for active projects, academic load, and recent decisions.
+
+## Step 5: Synthesize the brief
 
 ```
 {Day}, {Date}
@@ -42,18 +48,24 @@ TOP PRIORITIES (3 max)
 2. {second}
 3. {third}
 
-TODAY'S TASKS ({n} total)
-{grouped by project/label, P1 first}
+SPRINT PLAN
+Sprint 1 ({n}): {tasks}
+Sprint 2 ({n}): {tasks}
+Sprint 3 ({n}): {tasks}
+Sprint 4 ({n}): {tasks}
+Sprint 5 ({n}): {tasks}
 
-OVERDUE ({n}): {task names}
+OVERDUE ({n}): {task names, if any}
 
 GITHUB
 {PRs/issues needing action}
 
 FOCUS BLOCK
-{Best 2-hour deep work window + what to do in it}
+{Best 2-hour deep work window + what to do in it, based on current context}
 ```
 
 Under 400 words. No fluff.
 
-Ask: "Want me to reorder tasks or kick off anything specific?"
+## After the Brief
+
+Ask: "Want me to reorder tasks, adjust sprints, or kick off anything specific?"

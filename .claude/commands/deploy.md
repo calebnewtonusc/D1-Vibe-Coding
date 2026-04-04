@@ -1,16 +1,16 @@
 ---
-description: Deploy current project to Vercel — runs quality gate, then deploys
-allowed-tools: Bash(vercel:*), Bash(git:*), Bash(gh:*), Bash(npm:*), Bash(npx:*), Bash(ls:*), Read, Glob
+description: Deploy current project to Vercel — auto-detects project, runs quality gate, deploys
+allowed-tools: Bash(vercel:*), Bash(git:*), Bash(gh:*), Bash(pnpm:*), Bash(npm:*), Bash(npx:*), Bash(ls:*), Read, Glob
 argument-hint: "[--prod] [project-path]"
 ---
 
 # Deploy
 
-Deploy to Vercel. Runs quality gate first — never ships broken code.
+Deploy current project to Vercel. Runs quality gate first — never ships broken code.
 
 ## Step 1: Detect project
 
-If `$ARGUMENTS` has a path, use it. Otherwise use current directory.
+If $ARGUMENTS has a path, use it. Otherwise use current directory.
 
 ```bash
 ls package.json 2>/dev/null && echo "found" || echo "no package.json"
@@ -24,32 +24,41 @@ npm run typecheck 2>/dev/null || npx tsc --noEmit
 npm run lint 2>/dev/null || npx eslint . --max-warnings 0
 ```
 
-If either fails, stop. Do not deploy broken code.
+If either fails, stop and report the errors. Do not deploy broken code.
 
-## Step 3: Clean git state
+## Step 3: Ensure clean git state
 
 ```bash
 git status --short
+git diff --stat HEAD
 ```
 
-Commit any uncommitted changes first (by filename, never `git add -A`).
+Commit any uncommitted changes first:
+
+```bash
+git add {changed files by name}
+git commit -m "chore: pre-deploy cleanup"
+```
 
 ## Step 4: Deploy
 
-Preview (default):
+Preview deploy (default):
 
 ```bash
 vercel --yes 2>&1
 ```
 
-Production (if `--prod` in `$ARGUMENTS`):
+Production deploy (if $ARGUMENTS contains --prod):
+
+**Never run `vercel --prod` from local.** Push to `main` and let Vercel auto-deploy from GitHub:
 
 ```bash
 git push origin main
 ```
 
-Never run `vercel --prod` from local — push to main and let Vercel auto-deploy from GitHub.
+Then open the Vercel dashboard to confirm the deployment triggered.
 
 ## Step 5: Report
 
-Show the deployment URL. Note whether it's preview or production.
+Show the deployment URL. Tell Caleb whether it's preview or production.
+If it's the first deploy, link the project in Vercel dashboard.

@@ -6,7 +6,7 @@ argument-hint: "<project-name> [description]"
 
 # New Project
 
-Scaffold `$ARGUMENTS` as a new project. Every project starts polished — never barebones.
+Scaffold `$ARGUMENTS` as a new project under `projects/`. Every project starts polished — never barebones.
 
 ## Step 1: Parse arguments
 
@@ -26,8 +26,8 @@ Ask the user what type of project:
 ## Step 2: Create the directory and init git
 
 ```bash
-mkdir -p projects/{name}
-cd projects/{name}
+mkdir -p /Users/joelnewton/Desktop/2026-Code/projects/{name}
+cd /Users/joelnewton/Desktop/2026-Code/projects/{name}
 git init
 ```
 
@@ -36,7 +36,7 @@ git init
 ### Next.js app — full design system from day one
 
 ```bash
-cd projects/{name}
+cd /Users/joelnewton/Desktop/2026-Code/projects/{name}
 npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias "@/*" --no-git
 npm install lucide-react framer-motion @tanstack/react-query zod react-hook-form @hookform/resolvers
 npm install -D prettier prettier-plugin-tailwindcss
@@ -97,7 +97,7 @@ body {
 }
 ```
 
-Write `src/components/navbar.tsx` — scroll-aware (mandatory):
+Write `src/components/navbar.tsx` — scroll-aware (mandatory on every project):
 
 ```tsx
 "use client";
@@ -162,15 +162,30 @@ export default function Home() {
 
 ### Node.js API
 
-Create: `package.json`, `tsconfig.json` (strict, ES2022), `src/index.ts`, `.env.example`, `.gitignore`
+Create:
+
+- `package.json` (name, scripts: dev/build/start/typecheck)
+- `tsconfig.json` (strict, ES2022, NodeNext modules)
+- `src/index.ts` (entry point)
+- `.env.example`
+- `.gitignore` (node_modules, .env, dist)
 
 ### Python service
 
-Create: `requirements.txt`, `main.py`, `.env.example`, `.gitignore`
+Create:
+
+- `requirements.txt`
+- `main.py`
+- `.env.example`
+- `.gitignore` (**pycache**, .env, .venv)
 
 ### Library
 
-Create: `package.json` (with `main`, `types`, `exports`), `tsconfig.json` (strict), `src/index.ts`
+Create:
+
+- `package.json` (with `main`, `types`, `exports`)
+- `tsconfig.json` (strict)
+- `src/index.ts`
 
 ### Bare
 
@@ -185,19 +200,18 @@ git add src/ .prettierrc package.json tsconfig.json .gitignore 2>/dev/null
 git commit -m "init: {name} — {description or 'initial scaffold'}"
 ```
 
-## Step 5: Create GitHub repo and push
+## Step 5: Create GitHub repo and push (always — never wait to be asked)
 
 ```bash
-GITHUB_USER=$(gh api user --jq .login)
-gh repo create $GITHUB_USER/{name} --private --source=. --push
+gh repo create calebnewtonusc/{name} --private --source=. --push
 ```
 
-Report the GitHub URL and remind to connect to Vercel.
+Report the GitHub URL and remind Caleb to connect it to Vercel.
 
 ## Quality Check Before Finishing
 
 - [ ] Tailwind dark mode configured (#0a0a0a background)
-- [ ] shadcn/ui installed with core components
+- [ ] shadcn/ui installed with core components (button, card, input, badge, dialog, sheet, tabs, skeleton, toast, dropdown-menu)
 - [ ] Lucide React installed
 - [ ] Framer Motion, React Query, Zod, React Hook Form installed
 - [ ] Scroll-aware navbar present
@@ -205,4 +219,5 @@ Report the GitHub URL and remind to connect to Vercel.
 - [ ] prettier + prettier-plugin-tailwindcss configured
 - [ ] vercel.json created
 - [ ] .env.example created
-- [ ] GitHub repo created and pushed (private)
+- [ ] GitHub repo created and pushed (private, calebnewtonusc/{name})
+- [ ] No Co-Authored-By in commit message

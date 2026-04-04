@@ -1,51 +1,52 @@
 ---
-description: Add a Todoist task from natural language — auto-assigns label, priority, due date
+description: Add a Todoist task from natural language — auto-assigns sprint, priority, due date
 allowed-tools: Bash(curl:*), Bash(date:*), Read
-argument-hint: "<task description> [due:today|tomorrow|monday] [p1|p2|p3|p4]"
+argument-hint: "<task description> [due:today|tomorrow|monday] [sprint:1-5] [p1|p2|p3|p4]"
 ---
 
 # Todo
 
-Add a task to Todoist from natural language.
+Add a task to Todoist from natural language. Parse $ARGUMENTS to extract task details.
 
-## Step 1: Parse
+## Step 1: Parse the request
 
-Extract from `$ARGUMENTS`:
+Extract from $ARGUMENTS:
 
 - **Content**: the task description
-- **Due date**: "today", "tomorrow", day name, or "due:X"
-- **Priority**: "p1/p2/p3/p4" or "urgent/important", default P3
+- **Due date**: look for "today", "tomorrow", day names, or "due:X"
+- **Sprint**: look for "sprint 1-5" or "s1-s5", default to Sprint 3
+- **Priority**: look for "p1/p2/p3/p4" or "urgent/important", default to P3
 
-Todoist priority API mapping:
+Priority mapping (Todoist API):
 
-- P1 = priority 4
+- P1 = priority 4 (highest)
 - P2 = priority 3
-- P3 = priority 2 (default)
-- P4 = priority 1
+- P3 = priority 2
+- P4 = priority 1 (default)
 
-## Step 2: Get labels
+## Step 2: Get label IDs for sprint
 
 ```bash
 curl -sf "https://api.todoist.com/rest/v2/labels" \
-  -H "Authorization: Bearer $TODOIST_API_TOKEN"
+  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e"
 ```
 
-Match the requested label, or use the most appropriate one from the list.
+Find the label ID for "Sprint {n}".
 
-## Step 3: Create
+## Step 3: Create the task
 
 ```bash
 curl -sf -X POST "https://api.todoist.com/rest/v2/tasks" \
-  -H "Authorization: Bearer $TODOIST_API_TOKEN" \
+  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e" \
   -H "Content-Type: application/json" \
   -d '{
     "content": "{content}",
     "due_string": "{due}",
-    "priority": {priority_value},
-    "labels": ["{label}"]
+    "priority": {priority_api_value},
+    "labels": ["{sprint_label}"]
   }'
 ```
 
 ## Step 4: Confirm
 
-One line: task name, label, priority, due date.
+Report: task name, sprint, priority, due date. One line, no fluff.

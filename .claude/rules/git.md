@@ -1,46 +1,28 @@
+---
+paths:
+  - "**/*"
+---
 # Git Rules
 
-## Stage by filename — never `git add -A` or `git add .`
+**Never commit Co-Authored-By lines.** Caleb does not want Claude attribution in any commit messages.
 
-Prevents accidentally committing `.env` files, large binaries, or unrelated changes.
+**Stage by filename, never `git add -A` or `git add .`** — prevents accidentally committing `.env` files, large binaries, or unrelated changes.
 
-```bash
-git add src/components/Nav.tsx package.json
-```
+**amber-organization/amber requires PRs.** Never push directly to `main` on that repo. Always push a new branch and open a PR.
 
-## Commit message format
+**Personal repos (calebnewtonusc/*)** can be pushed to `main` directly.
 
-```
-feat: {what new capability was added}
-fix: {what was broken and how it was fixed}
-chore: {maintenance task}
-docs: {documentation change}
-style: {design/UI change}
-refactor: {code restructure, no behavior change}
-```
-
-Reference issue numbers: `fix: resolve null crash on profile load (#42)`
-
-## Branch naming
-
-- `feat/{feature-slug}` — new features
+**Branch naming:**
 - `fix/{issue-or-slug}` — bug fixes
+- `feat/{feature-slug}` — new features
 - `chore/{description}` — maintenance, dependency updates
 
-## Never amend published commits
+**Commit message format:**
+- `fix: {what was broken and how it was fixed}`
+- `feat: {what new capability was added}`
+- `chore: {maintenance task}`
+- Reference issue numbers: `fix: resolve null crash on profile load (#42)`
 
-Create a new commit instead. Amending rewrites history — breaks anyone else working on the branch.
+**Never amend published commits** — create a new commit instead.
 
-## Resolve merge conflicts — don't blindly discard
-
-Read both sides of the conflict before choosing. `git checkout --ours/--theirs` without understanding is a code deletion bug.
-
-## .env files
-
-Never stage `.env` files. Always verify `.gitignore` covers them:
-
-```bash
-git diff --cached --name-only | grep -E "^\.env|\.env\."
-```
-
-If a `.env` file appears — STOP and unstage it immediately.
+**Resolve conflicts by understanding them.** Don't `git checkout --ours/--theirs` blindly — read both sides.
