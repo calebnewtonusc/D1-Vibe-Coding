@@ -1,0 +1,48 @@
+# Wrangler Configuration Template
+# Copy to your project root and update the values
+
+#:schema node_modules/wrangler/config-schema.json
+
+name = "my-worker"
+main = "src/index.ts"
+compatibility_date = "2025-04-07"
+compatibility_flags = ["nodejs_compat"]
+
+# --- D1 Database ---
+[[d1_databases]]
+binding = "DB"                    # Access via env.DB in your Worker
+database_name = "my-db"           # Human-readable name
+database_id = "YOUR_DB_ID"        # From: wrangler d1 create my-db
+migrations_dir = "migrations"     # Where .sql migration files live
+
+# --- KV Namespace (Caching) ---
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "YOUR_KV_ID"              # From: wrangler kv namespace create CACHE
+
+# --- R2 Bucket (File Storage) ---
+# [[r2_buckets]]
+# binding = "STORAGE"
+# bucket_name = "my-files"       # From: wrangler r2 bucket create my-files
+
+# --- Durable Objects (Stateful) ---
+# [[durable_objects.bindings]]
+# name = "COUNTER"
+# class_name = "Counter"
+
+# --- Environment Variables ---
+[vars]
+ENVIRONMENT = "development"
+
+# --- Production Overrides ---
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+# --- Custom Domain ---
+# routes = [
+#   { pattern = "api.yourdomain.com", custom_domain = true }
+# ]
+
+# --- Cron Triggers ---
+# [triggers]
+# crons = ["0 * * * *"]          # Every hour

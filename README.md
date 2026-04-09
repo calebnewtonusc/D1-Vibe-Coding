@@ -189,11 +189,73 @@ This kit is optimized for:
 
 ---
 
+## Ecosystem and resources
+
+The vibe coding landscape is growing fast. We maintain a curated map of the entire ecosystem.
+
+**[ECOSYSTEM.md](ECOSYSTEM.md)** covers:
+
+- 7 awesome lists aggregating hundreds of vibe-coded projects
+- Vibe coding platforms and SDKs (VibeSDK, context engineering templates)
+- Workflow and orchestration tools
+- Cloudflare D1 example repos
+- MCP server directory (official + third-party)
+- AI coding tools beyond Claude Code
+- Articles and videos
+
+---
+
+## Documentation
+
+In-depth guides for specific aspects of the D1 vibe coding workflow.
+
+| Doc                                        | What It Covers                                                                                                       |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| [docs/METHODOLOGY.md](docs/METHODOLOGY.md) | The five principles of vibe coding, the D1 workflow loop, common anti-patterns, how to measure effectiveness         |
+| [docs/CLOUDFLARE.md](docs/CLOUDFLARE.md)   | D1 query patterns, migrations, Drizzle ORM setup, Worker routing (vanilla + Hono), D1 + KV + R2 together, deployment |
+| [docs/PROMPTS.md](docs/PROMPTS.md)         | 20+ real prompts for scaffolding, feature building, debugging, database work, UI design, and deployment              |
+
+---
+
+## Templates and snippets
+
+Drop-in starter files for common patterns.
+
+### Templates (full starter files)
+
+| File                                                             | What It Is                                                                 |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [templates/cloudflare-worker.ts](templates/cloudflare-worker.ts) | Complete Worker + D1 entry point with CORS, error handling, JSON helpers   |
+| [templates/d1-migration.sql](templates/d1-migration.sql)         | Migration template with standard columns, indexes, and auto-update trigger |
+| [templates/hero.tsx](templates/hero.tsx)                         | Hero section component with gradient text and CTA buttons                  |
+| [templates/navbar.tsx](templates/navbar.tsx)                     | Scroll-aware navbar (hidden at top, appears on scroll)                     |
+| [templates/card.tsx](templates/card.tsx)                         | Dark mode card with hover states                                           |
+| [templates/api-route.ts](templates/api-route.ts)                 | Next.js API route with Zod validation                                      |
+| [templates/page.tsx](templates/page.tsx)                         | Page template with loading/error/empty states                              |
+| [templates/globals.css](templates/globals.css)                   | Tailwind globals with dark mode defaults                                   |
+| [templates/loading.tsx](templates/loading.tsx)                   | Skeleton loader component                                                  |
+| [templates/error.tsx](templates/error.tsx)                       | Error boundary component                                                   |
+| [templates/not-found.tsx](templates/not-found.tsx)               | 404 page                                                                   |
+
+### Snippets (copy-paste patterns)
+
+| File                                                       | What It Is                                                                  |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [snippets/drizzle-d1.ts](snippets/drizzle-d1.ts)           | Complete Drizzle ORM + D1 schema, types, and query examples                 |
+| [snippets/wrangler.toml](snippets/wrangler.toml)           | Annotated wrangler.toml with D1, KV, R2, Durable Objects, and cron triggers |
+| [snippets/useScrollNav.tsx](snippets/useScrollNav.tsx)     | Scroll-aware navbar hook                                                    |
+| [snippets/tailwind.config.ts](snippets/tailwind.config.ts) | Tailwind config with custom theme                                           |
+| [snippets/prettierrc.json](snippets/prettierrc.json)       | Prettier config                                                             |
+| [snippets/gitignore.txt](snippets/gitignore.txt)           | Standard .gitignore                                                         |
+
+---
+
 ## File structure
 
 ```
 D1-Vibe-Coding/
 ├── CLAUDE.md                    # Drop in project root; enforces design system
+├── ECOSYSTEM.md                 # Curated map of the vibe coding landscape
 ├── setup.sh                     # One-command full infrastructure setup
 ├── install.sh                   # Quick project-level install
 ├── SETUP.md                     # Manual setup instructions
@@ -201,6 +263,12 @@ D1-Vibe-Coding/
 │   ├── commands/                # 36 slash commands
 │   ├── rules/                   # 18 rules files (auto-injected context)
 │   └── hooks/                   # PostToolUse formatters and sync hooks
+├── docs/
+│   ├── METHODOLOGY.md           # Vibe coding philosophy and workflow
+│   ├── CLOUDFLARE.md            # D1/Workers/KV/R2 patterns and examples
+│   └── PROMPTS.md               # Example AI prompts for every stage of dev
+├── templates/                   # Full starter files (Worker, migration, components)
+├── snippets/                    # Copy-paste patterns (Drizzle, wrangler, hooks)
 ├── second-brain/
 │   ├── README.md                # Two-repo architecture explained
 │   ├── init-brain.sh            # Standalone second brain setup
@@ -218,6 +286,21 @@ D1-Vibe-Coding/
     ├── settings.json            # Hooks + permissions template
     └── README.md                # How to configure
 ```
+
+---
+
+## Related repos
+
+| Repo                                                                                        | What It Is                                              |
+| ------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| [cloudflare/vibesdk](https://github.com/cloudflare/vibesdk)                                 | Cloudflare's official vibe coding SDK with D1 + Drizzle |
+| [coleam00/context-engineering-intro](https://github.com/coleam00/context-engineering-intro) | Context engineering templates for Claude Code           |
+| [roboco-io/awesome-vibecoding](https://github.com/roboco-io/awesome-vibecoding)             | The biggest awesome list for vibe coding                |
+| [punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers)             | Directory of MCP servers for AI agents                  |
+| [sha256/local-d1](https://github.com/sha256/local-d1)                                       | Local D1 dev replica for Next.js                        |
+| [cpjet64/vibecoding](https://github.com/cpjet64/vibecoding)                                 | Vibe coding techniques and wisdom                       |
+
+See [ECOSYSTEM.md](ECOSYSTEM.md) for the full list.
 
 ---
 
