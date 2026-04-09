@@ -247,6 +247,7 @@ The vibe coding landscape is growing fast. **[ECOSYSTEM.md](ECOSYSTEM.md)** is o
 | [docs/METHODOLOGY.md](docs/METHODOLOGY.md) | The five principles of vibe coding, the D1 workflow loop, anti-patterns, measuring effectiveness      |
 | [docs/CLOUDFLARE.md](docs/CLOUDFLARE.md)   | D1 query patterns, migrations, Drizzle ORM, Worker routing (vanilla + Hono), D1 + KV + R2, deployment |
 | [docs/PROMPTS.md](docs/PROMPTS.md)         | 20+ real prompts for scaffolding, features, debugging, database work, UI design, deployment           |
+| [docs/INTERNALS.md](docs/INTERNALS.md)     | How Claude Code works under the hood: CLAUDE.md loading, hooks, tools, agents, context compression    |
 
 ---
 
@@ -320,7 +321,8 @@ D1-Vibe-Coding/
 ├── docs/
 │   ├── METHODOLOGY.md           # Vibe coding philosophy and workflow
 │   ├── CLOUDFLARE.md            # D1/Workers/KV/R2 patterns and examples
-│   └── PROMPTS.md               # Example AI prompts for every stage of dev
+│   ├── PROMPTS.md               # Example AI prompts for every stage of dev
+│   └── INTERNALS.md             # How Claude Code works under the hood
 ├── examples/
 │   └── todo-app/                # Working Worker + D1 example (deploy in 60s)
 ├── templates/                   # Full starter files (Worker, migration, components)
