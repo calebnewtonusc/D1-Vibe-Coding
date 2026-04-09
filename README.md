@@ -1,26 +1,73 @@
-# D1 Vibe Coding
+<p align="center">
+  <h1 align="center">D1 Vibe Coding</h1>
+  <p align="center">The complete Claude Code setup for developers who ship.</p>
+</p>
 
-A complete Claude Code setup for developers who ship. Drop it in and your AI pair programmer immediately writes better code, builds better UIs, and follows consistent patterns. Run one command to get your entire development infrastructure wired up: personal second brain, iMessage agent, and all context synced to GitHub automatically.
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="https://github.com/calebnewtonusc/D1-Vibe-Coding/stargazers"><img src="https://img.shields.io/github/stars/calebnewtonusc/D1-Vibe-Coding?style=social" alt="Stars"></a>
+  <a href="https://github.com/calebnewtonusc/D1-Vibe-Coding/commits/main"><img src="https://img.shields.io/github/last-commit/calebnewtonusc/D1-Vibe-Coding" alt="Last Commit"></a>
+  <a href=".claude/commands"><img src="https://img.shields.io/badge/slash_commands-36-indigo" alt="Commands"></a>
+  <a href=".claude/rules"><img src="https://img.shields.io/badge/rules_files-18-green" alt="Rules"></a>
+</p>
 
-## What you get
-
-**36 slash commands** covering the full dev lifecycle: scaffold, push, deploy, audit, PR lifecycle, daily planning, sprint tracking, design review, testing, debugging, and more.
-
-**18+ rules files** auto-injected as context based on file type: security, API patterns, component standards, database, deployment, naming, performance, state management, accessibility, TypeScript, design, testing, and UX laws.
-
-**A full design system** (`CLAUDE.md`) that makes every generated UI look like a funded startup's product page. Dark mode, shadcn/ui, Tailwind, scroll-aware navbar, and real typography, all enforced on every generation.
-
-**A second brain system** that splits your personal context into two repos: a public `claude-context` for operational instructions (zero PII) and a private `{your-name}-context` for personal facts. Claude loads your identity, current projects, and priorities every session automatically.
-
-**Hooks** that auto-format files after every write, sync context to GitHub on every edit, warn before touching `.env`, and load your Todoist priorities at session start.
-
-**iMessage agent** wired in out of the box: reads your chat history, understands your contacts, and sends messages via AppleScript.
+<p align="center">
+  Drop it in and your AI pair programmer immediately writes better code, builds better UIs, and follows consistent patterns.<br>
+  One command to wire up your entire development infrastructure: second brain, hooks, MCP, and context sync.
+</p>
 
 ---
 
-## Full infrastructure setup (recommended)
+## Table of Contents
 
-One command. Creates everything from scratch.
+- [What You Get](#what-you-get)
+- [Quick Start](#quick-start)
+- [Full Infrastructure Setup](#full-infrastructure-setup)
+- [Slash Commands](#the-slash-commands)
+- [Second Brain](#the-second-brain)
+- [Design System](#the-design-system)
+- [Rules Files](#the-rules-files)
+- [Hooks](#the-hooks)
+- [Stack](#stack-assumptions)
+- [Ecosystem](#ecosystem-and-resources)
+- [Documentation](#documentation)
+- [Templates and Snippets](#templates-and-snippets)
+- [Example Project](#example-project)
+- [File Structure](#file-structure)
+- [Related Repos](#related-repos)
+- [Contributing](#contributing)
+
+---
+
+## What you get
+
+| Feature                | Details                                                                                                                                                              |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **36 slash commands**  | Full dev lifecycle: scaffold, push, deploy, audit, PR review, sprint tracking, debugging                                                                             |
+| **18 rules files**     | Auto-injected context by file type: security, API, components, database, deployment, naming, performance, state, accessibility, TypeScript, design, testing, UX laws |
+| **Full design system** | Dark mode, shadcn/ui, Tailwind, scroll-aware navbar, real typography. Every UI looks like a funded startup's product page                                            |
+| **Second brain**       | Two-repo system: public `claude-context` (operational) + private `{name}-context` (personal). Auto-syncs to GitHub                                                   |
+| **Smart hooks**        | Auto-format on save, sync context repos, warn on `.env` writes, load Todoist priorities at session start                                                             |
+| **iMessage agent**     | Optional macOS integration: read chat history, triage messages, send via AppleScript                                                                                 |
+| **Example project**    | Working Cloudflare Worker + D1 todo app you can deploy in 60 seconds                                                                                                 |
+
+---
+
+## Quick Start
+
+**Option A: Just want CLAUDE.md + commands + rules in an existing project:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/calebnewtonusc/D1-Vibe-Coding/main/install.sh | bash
+```
+
+**Option B: Want the full quick-start CLAUDE.md (50 lines, essential patterns only):**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/calebnewtonusc/D1-Vibe-Coding/main/CLAUDE-QUICK.md > CLAUDE.md
+```
+
+**Option C: Want everything (second brain, hooks, MCP, full context system):**
 
 ```bash
 git clone https://github.com/calebnewtonusc/D1-Vibe-Coding
@@ -28,33 +75,20 @@ cd D1-Vibe-Coding
 chmod +x setup.sh && ./setup.sh
 ```
 
-The setup script collects your name, GitHub username, and API keys, then:
-
-1. Creates `{your-name}-context` (private GitHub repo) with personal brain templates: `YOU.md`, `NOW.md`, `PEOPLE.md`, `SYSTEM.md`, `STACK.md`
-2. Creates `claude-context` (public GitHub repo) with D1 operational instructions: CLAUDE.md, all commands, rules, and hooks
-3. Clones your iMessage agent into your workspace and wires the MCP config
-4. Writes `~/.claude/settings.json` with all hooks: SessionStart (loads your context + Todoist priorities), PostToolUse (auto-formats and auto-syncs both context repos), Stop (push reminder), Notification
-5. Configures Composio MCP if you have a URL
-
-You end up with three repos and a fully wired Claude setup. Every session starts with your full context loaded. Every edit to your context files auto-commits and auto-pushes.
-
 ---
 
-## Quick install (project-level only)
+## Full infrastructure setup
 
-Just want CLAUDE.md and the commands/rules in an existing project:
+The `setup.sh` script collects your name, GitHub username, and API keys, then:
 
-```bash
-chmod +x install.sh && ./install.sh /path/to/your/project
-```
+1. Creates `{your-name}-context` (private GitHub repo) with personal brain templates
+2. Creates `claude-context` (public GitHub repo) with operational instructions
+3. Optionally sets up the iMessage agent (macOS only)
+4. Writes `~/.claude/settings.json` with all hooks
+5. Installs commands and rules globally to `~/.claude/`
+6. Configures Composio MCP if you have a URL
 
-Or from within your project:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/calebnewtonusc/D1-Vibe-Coding/main/install.sh | bash
-```
-
-For full infrastructure (second brain + iMessage + MCP), run `setup.sh` instead.
+You end up with a fully wired Claude setup. Every session starts with your full context loaded. Every edit to your context files auto-commits and auto-pushes.
 
 ---
 
@@ -94,7 +128,7 @@ For full infrastructure (second brain + iMessage + MCP), run `setup.sh` instead.
 | `/database`       | Scaffold migration, types, and query functions                 |
 | `/context-update` | Manually trigger context file sync                             |
 | `/scratchpad`     | Capture quick ideas                                            |
-| `/imovie`         | AirDrop-to-iMovie automation helpers                           |
+| `/imovie`         | AirDrop-to-iMovie automation (macOS)                           |
 
 ---
 
@@ -103,11 +137,11 @@ For full infrastructure (second brain + iMessage + MCP), run `setup.sh` instead.
 Two repos. Hard boundary between operational and personal.
 
 ```
-claude-context/      PUBLIC — how Claude should behave
+claude-context/      PUBLIC: how Claude should behave
                      CLAUDE.md, rules/, commands/, hooks/
                      Zero personal info. Safe to share.
 
-{name}-context/      PRIVATE — who you are and what you're working on
+{name}-context/      PRIVATE: who you are and what you're working on
                      YOU.md, NOW.md, PEOPLE.md, SYSTEM.md, STACK.md
                      Never make this public.
 ```
@@ -125,7 +159,7 @@ The `CLAUDE.md` is the core. It enforces:
 - **Dark mode by default**: `#0a0a0a` background, `zinc-950` surfaces
 - **shadcn/ui always**: never raw `<button>` or `<input>` from scratch
 - **Lucide React icons**: never emoji, never text characters as icons
-- **Scroll-aware navbar on every project**: hidden at top, slides in after 80px, hides near page bottom
+- **Scroll-aware navbar**: hidden at top, slides in after 80px, hides near page bottom
 - **Typography hierarchy**: Inter/Geist, `text-5xl font-bold tracking-tight` heroes, proper scale
 - **Cards and buttons with hover states**: every interactive element
 - **Loading/empty/error states**: never blank white space
@@ -133,44 +167,48 @@ The `CLAUDE.md` is the core. It enforces:
 
 Before shipping any UI, ask: does this look like a YC-backed startup's product page? If not, rebuild it.
 
+New to this? Start with [CLAUDE-QUICK.md](CLAUDE-QUICK.md) (50 lines, essential patterns only).
+
 ---
 
 ## The rules files
 
 Each file is auto-loaded as context when Claude touches matching files:
 
-- **security.md**: parameterized queries, RLS, no secrets in logs, auth ownership checks
-- **api.md**: Next.js App Router routes, Zod validation, consistent error shapes
-- **components.md**: shadcn/ui enforcement, skeleton/empty/error state patterns
-- **database.md**: Supabase conventions, RLS policies, migration workflow
-- **deployment.md**: Vercel deploy workflow, pre-deploy checklist
-- **naming.md**: file, variable, DB, API, branch naming conventions
-- **performance.md**: `next/image`, `next/font`, Server Components, bundle size
-- **state.md**: React Query for server state, URL state, Zustand for shared UI
-- **accessibility.md**: semantic HTML, focus management, WCAG contrast, ARIA
-- **typescript.md**: strict mode patterns, Zod integration, no `any`
-- **design.md**: D1 design system, color, typography, components
-- **writing.md**: copy standards, no em dashes, no AI slop
-- **scroll-effects.md**: CSS scroll animations, IntersectionObserver, parallax
-- **testing.md**: unit, integration, and E2E testing patterns
-- **ux-laws.md**: Hick's, Fitts's, Miller's, and other UX laws applied
-- **review-discipline.md**: code review standards and checklists
-- **audit.md**: pre-ship audit checklist
-- **git.md**: commit format, branch naming, PR rules
+| Rule                   | What It Enforces                                                      |
+| ---------------------- | --------------------------------------------------------------------- |
+| `security.md`          | Parameterized queries, RLS, no secrets in logs, auth ownership checks |
+| `api.md`               | Next.js App Router routes, Zod validation, consistent error shapes    |
+| `components.md`        | shadcn/ui enforcement, skeleton/empty/error state patterns            |
+| `database.md`          | Supabase conventions, RLS policies, migration workflow                |
+| `deployment.md`        | Vercel deploy workflow, pre-deploy checklist                          |
+| `naming.md`            | File, variable, DB, API, branch naming conventions                    |
+| `performance.md`       | `next/image`, `next/font`, Server Components, bundle size             |
+| `state.md`             | React Query for server state, URL state, Zustand for shared UI        |
+| `accessibility.md`     | Semantic HTML, focus management, WCAG contrast, ARIA                  |
+| `typescript.md`        | Strict mode patterns, Zod integration, no `any`                       |
+| `design.md`            | D1 design system: color, typography, components                       |
+| `writing.md`           | Copy standards, no AI slop                                            |
+| `scroll-effects.md`    | CSS scroll animations, IntersectionObserver, parallax                 |
+| `testing.md`           | Unit, integration, and E2E testing patterns                           |
+| `ux-laws.md`           | Hick's, Fitts's, Miller's, and other UX laws applied                  |
+| `review-discipline.md` | Code review standards and checklists                                  |
+| `audit.md`             | Pre-ship audit checklist                                              |
+| `git.md`               | Commit format, branch naming, PR rules                                |
 
 ---
 
 ## The hooks
 
-```
-SessionStart         →  load personal context + Todoist priorities into every session
-PostToolUse Write    →  auto-format on save + sync context repos to GitHub
-PreToolUse Write     →  warn before touching .env files
-Stop                 →  remind to push to GitHub + surface TODOs
-Notification         →  voice alerts via macOS say command
-```
+| Hook           | Trigger           | What It Does                                             |
+| -------------- | ----------------- | -------------------------------------------------------- |
+| `SessionStart` | Every new session | Load personal context + Todoist priorities               |
+| `PostToolUse`  | After Write/Edit  | Auto-format with Prettier + sync context repos to GitHub |
+| `PreToolUse`   | Before Write      | Warn before touching `.env` files                        |
+| `Stop`         | Session end       | Remind to push to GitHub + surface TODOs                 |
+| `Notification` | Task complete     | Voice alert via macOS `say`                              |
 
-The `PostToolUse` hook watches your `{name}-context/` and `claude-context/` directories. Any write auto-commits and pushes. You never fall out of sync.
+The `PostToolUse` hook watches your `{name}-context/` and `claude-context/` directories. Any write auto-commits and pushes.
 
 ---
 
@@ -179,8 +217,7 @@ The `PostToolUse` hook watches your `{name}-context/` and `claude-context/` dire
 This kit is optimized for:
 
 - **Next.js 14+** (App Router)
-- **Tailwind CSS**
-- **shadcn/ui**
+- **Tailwind CSS** + **shadcn/ui**
 - **Supabase** (auth + database)
 - **Vercel** (deployment)
 - **TypeScript** (strict mode)
@@ -191,9 +228,7 @@ This kit is optimized for:
 
 ## Ecosystem and resources
 
-The vibe coding landscape is growing fast. We maintain a curated map of the entire ecosystem.
-
-**[ECOSYSTEM.md](ECOSYSTEM.md)** covers:
+The vibe coding landscape is growing fast. **[ECOSYSTEM.md](ECOSYSTEM.md)** is our curated map:
 
 - 7 awesome lists aggregating hundreds of vibe-coded projects
 - Vibe coding platforms and SDKs (VibeSDK, context engineering templates)
@@ -207,19 +242,15 @@ The vibe coding landscape is growing fast. We maintain a curated map of the enti
 
 ## Documentation
 
-In-depth guides for specific aspects of the D1 vibe coding workflow.
-
-| Doc                                        | What It Covers                                                                                                       |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| [docs/METHODOLOGY.md](docs/METHODOLOGY.md) | The five principles of vibe coding, the D1 workflow loop, common anti-patterns, how to measure effectiveness         |
-| [docs/CLOUDFLARE.md](docs/CLOUDFLARE.md)   | D1 query patterns, migrations, Drizzle ORM setup, Worker routing (vanilla + Hono), D1 + KV + R2 together, deployment |
-| [docs/PROMPTS.md](docs/PROMPTS.md)         | 20+ real prompts for scaffolding, feature building, debugging, database work, UI design, and deployment              |
+| Doc                                        | What It Covers                                                                                        |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| [docs/METHODOLOGY.md](docs/METHODOLOGY.md) | The five principles of vibe coding, the D1 workflow loop, anti-patterns, measuring effectiveness      |
+| [docs/CLOUDFLARE.md](docs/CLOUDFLARE.md)   | D1 query patterns, migrations, Drizzle ORM, Worker routing (vanilla + Hono), D1 + KV + R2, deployment |
+| [docs/PROMPTS.md](docs/PROMPTS.md)         | 20+ real prompts for scaffolding, features, debugging, database work, UI design, deployment           |
 
 ---
 
 ## Templates and snippets
-
-Drop-in starter files for common patterns.
 
 ### Templates (full starter files)
 
@@ -227,26 +258,45 @@ Drop-in starter files for common patterns.
 | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | [templates/cloudflare-worker.ts](templates/cloudflare-worker.ts) | Complete Worker + D1 entry point with CORS, error handling, JSON helpers   |
 | [templates/d1-migration.sql](templates/d1-migration.sql)         | Migration template with standard columns, indexes, and auto-update trigger |
-| [templates/hero.tsx](templates/hero.tsx)                         | Hero section component with gradient text and CTA buttons                  |
-| [templates/navbar.tsx](templates/navbar.tsx)                     | Scroll-aware navbar (hidden at top, appears on scroll)                     |
+| [templates/hero.tsx](templates/hero.tsx)                         | Hero section with gradient text and CTA buttons                            |
+| [templates/navbar.tsx](templates/navbar.tsx)                     | Scroll-aware navbar                                                        |
 | [templates/card.tsx](templates/card.tsx)                         | Dark mode card with hover states                                           |
 | [templates/api-route.ts](templates/api-route.ts)                 | Next.js API route with Zod validation                                      |
-| [templates/page.tsx](templates/page.tsx)                         | Page template with loading/error/empty states                              |
-| [templates/globals.css](templates/globals.css)                   | Tailwind globals with dark mode defaults                                   |
-| [templates/loading.tsx](templates/loading.tsx)                   | Skeleton loader component                                                  |
-| [templates/error.tsx](templates/error.tsx)                       | Error boundary component                                                   |
+| [templates/page.tsx](templates/page.tsx)                         | Page with loading/error/empty states                                       |
+| [templates/globals.css](templates/globals.css)                   | Tailwind globals with dark mode                                            |
+| [templates/loading.tsx](templates/loading.tsx)                   | Skeleton loader                                                            |
+| [templates/error.tsx](templates/error.tsx)                       | Error boundary                                                             |
 | [templates/not-found.tsx](templates/not-found.tsx)               | 404 page                                                                   |
 
 ### Snippets (copy-paste patterns)
 
-| File                                                       | What It Is                                                                  |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [snippets/drizzle-d1.ts](snippets/drizzle-d1.ts)           | Complete Drizzle ORM + D1 schema, types, and query examples                 |
-| [snippets/wrangler.toml](snippets/wrangler.toml)           | Annotated wrangler.toml with D1, KV, R2, Durable Objects, and cron triggers |
-| [snippets/useScrollNav.tsx](snippets/useScrollNav.tsx)     | Scroll-aware navbar hook                                                    |
-| [snippets/tailwind.config.ts](snippets/tailwind.config.ts) | Tailwind config with custom theme                                           |
-| [snippets/prettierrc.json](snippets/prettierrc.json)       | Prettier config                                                             |
-| [snippets/gitignore.txt](snippets/gitignore.txt)           | Standard .gitignore                                                         |
+| File                                                       | What It Is                                         |
+| ---------------------------------------------------------- | -------------------------------------------------- |
+| [snippets/drizzle-d1.ts](snippets/drizzle-d1.ts)           | Drizzle ORM + D1 schema, types, and query examples |
+| [snippets/wrangler.toml](snippets/wrangler.toml)           | Annotated wrangler config with all binding types   |
+| [snippets/useScrollNav.tsx](snippets/useScrollNav.tsx)     | Scroll-aware navbar hook                           |
+| [snippets/tailwind.config.ts](snippets/tailwind.config.ts) | Tailwind config with custom theme                  |
+| [snippets/prettierrc.json](snippets/prettierrc.json)       | Prettier config                                    |
+| [snippets/gitignore.txt](snippets/gitignore.txt)           | Standard .gitignore                                |
+
+---
+
+## Example project
+
+A working Cloudflare Worker + D1 todo API you can deploy in 60 seconds:
+
+```bash
+cd examples/todo-app
+npm install
+wrangler d1 create todo-db
+# Copy the database_id into wrangler.toml
+wrangler d1 migrations apply todo-db --local
+wrangler dev
+```
+
+Then hit `http://localhost:8787/api/todos` to see it running.
+
+See [examples/todo-app/README.md](examples/todo-app/README.md) for full details.
 
 ---
 
@@ -254,11 +304,15 @@ Drop-in starter files for common patterns.
 
 ```
 D1-Vibe-Coding/
-├── CLAUDE.md                    # Drop in project root; enforces design system
-├── ECOSYSTEM.md                 # Curated map of the vibe coding landscape
+├── CLAUDE.md                    # Full design system (700 lines)
+├── CLAUDE-QUICK.md              # Quick-start version (50 lines)
+├── ECOSYSTEM.md                 # Curated vibe coding landscape map
+├── CONTRIBUTING.md              # How to contribute
+├── LICENSE                      # MIT
 ├── setup.sh                     # One-command full infrastructure setup
 ├── install.sh                   # Quick project-level install
 ├── SETUP.md                     # Manual setup instructions
+├── .github/                     # Issue templates, PR template, CI
 ├── .claude/
 │   ├── commands/                # 36 slash commands
 │   ├── rules/                   # 18 rules files (auto-injected context)
@@ -267,21 +321,15 @@ D1-Vibe-Coding/
 │   ├── METHODOLOGY.md           # Vibe coding philosophy and workflow
 │   ├── CLOUDFLARE.md            # D1/Workers/KV/R2 patterns and examples
 │   └── PROMPTS.md               # Example AI prompts for every stage of dev
+├── examples/
+│   └── todo-app/                # Working Worker + D1 example (deploy in 60s)
 ├── templates/                   # Full starter files (Worker, migration, components)
 ├── snippets/                    # Copy-paste patterns (Drizzle, wrangler, hooks)
 ├── second-brain/
 │   ├── README.md                # Two-repo architecture explained
 │   ├── init-brain.sh            # Standalone second brain setup
 │   ├── context/                 # Personal context templates
-│   │   ├── YOU.md
-│   │   ├── NOW.md
-│   │   ├── PEOPLE.md
-│   │   ├── SYSTEM.md
-│   │   └── STACK.md
-│   └── agents/
-│       ├── imessage.md          # iMessage agent integration guide
-│       ├── composio.md          # Composio MCP setup guide
-│       └── todoist.md           # Todoist session context guide
+│   └── agents/                  # iMessage, Composio, Todoist guides
 └── settings/
     ├── settings.json            # Hooks + permissions template
     └── README.md                # How to configure
@@ -304,6 +352,12 @@ See [ECOSYSTEM.md](ECOSYSTEM.md) for the full list.
 
 ---
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). PRs welcome. The bar: does this work for every developer, not just one person?
+
+---
+
 Built by [Caleb Newton](https://github.com/calebnewtonusc)
 
-All glory to God! ✝️❤️
+All glory to God!

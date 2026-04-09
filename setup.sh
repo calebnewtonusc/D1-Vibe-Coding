@@ -35,6 +35,15 @@ err()  { echo -e "  ${RED}✗${NC} $1"; }
 head() { echo -e "\n${BLD}${BLU}$1${NC}"; }
 sep()  { echo -e "${BLD}────────────────────────────────────────────${NC}"; }
 
+# Cross-platform sed in-place (macOS uses -i '', GNU uses -i)
+sedi() {
+  if [[ "$(uname)" == "Darwin" ]]; then
+    sed -i '' "$@"
+  else
+    sed -i "$@"
+  fi
+}
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 clear
@@ -133,10 +142,8 @@ cp "$SCRIPT_DIR/second-brain/context/SYSTEM.md" "$PC_DIR/SYSTEM.md"
 cp "$SCRIPT_DIR/second-brain/context/STACK.md"  "$PC_DIR/STACK.md"
 
 # Pre-fill the name placeholder
-sed -i '' "s/YOUR_NAME/$USER_NAME/g" "$PC_DIR/YOU.md" 2>/dev/null || \
-  sed -i "s/YOUR_NAME/$USER_NAME/g" "$PC_DIR/YOU.md"
-sed -i '' "s/YOUR_GITHUB_USERNAME/$GITHUB_USER/g" "$PC_DIR/YOU.md" 2>/dev/null || \
-  sed -i "s/YOUR_GITHUB_USERNAME/$GITHUB_USER/g" "$PC_DIR/YOU.md"
+sedi "s/YOUR_NAME/$USER_NAME/g" "$PC_DIR/YOU.md"
+sedi "s/YOUR_GITHUB_USERNAME/$GITHUB_USER/g" "$PC_DIR/YOU.md"
 
 log "Templates copied to $PC_DIR"
 

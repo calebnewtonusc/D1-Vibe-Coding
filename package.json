@@ -1,0 +1,13 @@
+{
+  "name": "d1-vibe-coding",
+  "private": true,
+  "description": "The complete Claude Code setup for developers who ship",
+  "scripts": {
+    "format": "prettier --write '**/*.{ts,tsx,js,jsx,json,css,md}' --ignore-path .gitignore",
+    "format:check": "prettier --check '**/*.{ts,tsx,js,jsx,json,css,md}' --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11"
+  }
+}

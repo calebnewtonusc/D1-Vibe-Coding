@@ -1,0 +1,17 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create todo-db",
+    "db:migrate": "wrangler d1 migrations apply todo-db --local",
+    "db:migrate:prod": "wrangler d1 migrations apply todo-db --remote"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250405.0",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.14.0"
+  }
+}

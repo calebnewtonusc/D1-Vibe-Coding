@@ -1,0 +1,12 @@
+#:schema node_modules/wrangler/config-schema.json
+
+name = "todo-app"
+main = "src/index.ts"
+compatibility_date = "2025-04-07"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "todo-db"
+database_id = "YOUR_DATABASE_ID"
+migrations_dir = "migrations"
