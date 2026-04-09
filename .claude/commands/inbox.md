@@ -7,8 +7,17 @@ allowed-tools: Bash(bun:*), Bash(cd:*), Read
 
 Run the iMessage agent scan immediately. No setup, no confirmation.
 
+> **Requires**: iMessage agent installed via `setup.sh`. macOS only.
+
+Find the iMessage agent directory (check `$HOME/dev/imessage-agent` or search for it):
+
 ```bash
-cd /Users/joelnewton/Desktop/2026-Code/_System/imessage-agent && bun run agent.ts --mode scan 2>&1
+IMSG_DIR="${IMESSAGE_AGENT_DIR:-$HOME/dev/imessage-agent}"
+if [ -d "$IMSG_DIR" ]; then
+  cd "$IMSG_DIR" && bun run agent.ts --mode scan 2>&1
+else
+  echo "iMessage agent not found. Run setup.sh to install, or set IMESSAGE_AGENT_DIR."
+fi
 ```
 
 After the scan, synthesize:
@@ -20,13 +29,13 @@ After the scan, synthesize:
 If $ARGUMENTS is "full" or "triage":
 
 ```bash
-cd /Users/joelnewton/Desktop/2026-Code/_System/imessage-agent && bun run agent.ts --mode inbox 2>&1
+cd "$IMSG_DIR" && bun run agent.ts --mode inbox 2>&1
 ```
 
 If $ARGUMENTS is "run":
 
 ```bash
-cd /Users/joelnewton/Desktop/2026-Code/_System/imessage-agent && bun run agent.ts --mode run --dry-run 2>&1
+cd "$IMSG_DIR" && bun run agent.ts --mode run --dry-run 2>&1
 ```
 
-Always surface the results immediately — never ask Caleb to run this himself.
+Always surface the results immediately. Never ask the user to run this themselves.

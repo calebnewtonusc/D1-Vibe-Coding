@@ -60,5 +60,5 @@ Then open the Vercel dashboard to confirm the deployment triggered.
 
 ## Step 5: Report
 
-Show the deployment URL. Tell Caleb whether it's preview or production.
+Show the deployment URL. Report whether it's preview or production.
 If it's the first deploy, link the project in Vercel dashboard.

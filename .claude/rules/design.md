@@ -5,6 +5,7 @@ paths:
   - "projects/**/*.html"
   - "projects/**/*.css"
 ---
+
 # Design Rules
 
 ## The Standard
@@ -25,6 +26,7 @@ Every section must look visually distinct from every other section on the page.
 ## Tech Stack (always)
 
 **React / Next.js:**
+
 - Tailwind CSS (always)
 - shadcn/ui (always — never build raw buttons, inputs, dialogs from scratch)
 - Lucide React icons (always)
@@ -32,6 +34,7 @@ Every section must look visually distinct from every other section on the page.
 - Framer Motion for animations when there is interactivity
 
 **Vanilla HTML:**
+
 - Tailwind CDN
 - Google Fonts: Inter
 - Lucide CDN for icons
@@ -63,7 +66,7 @@ Every section must look visually distinct from every other section on the page.
 
 ## Images
 
-- **Always include real photos on personal and tribute sites** — scan iMessage, Contacts, or ask Caleb for assets
+- **Always include real photos on personal and tribute sites** — use actual images, never placeholders
 - Real people deserve real photos. Never ship a person's page without their face on it
 - Photo treatment: `rounded-2xl overflow-hidden` with subtle gradient overlay at bottom
 - Photo frame: `border border-white/10` with `box-shadow: 0 32px 80px rgba(0,0,0,0.6)`
@@ -112,6 +115,7 @@ If no — redesign it.
 ## Scroll-Aware Navbar (Mandatory)
 
 Every project uses a scroll-aware navbar:
+
 - Hidden at the top (y = 0)
 - Slides in after scrolling 80px
 - Hides again within 200px of the bottom
@@ -122,7 +126,9 @@ function useScrollNav() {
   useEffect(() => {
     const handle = () => {
       const scrollY = window.scrollY;
-      const nearBottom = scrollY + window.innerHeight >= document.documentElement.scrollHeight - 200;
+      const nearBottom =
+        scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 200;
       setVisible(scrollY > 80 && !nearBottom);
     };
     window.addEventListener("scroll", handle, { passive: true });
@@ -137,20 +143,30 @@ Apply with: `style={{ transform: visible ? "translateY(0)" : "translateY(-100%)"
 Never use a static always-visible sticky navbar.
 
 **Vanilla HTML equivalent (plain HTML projects — no React):**
+
 ```html
-<nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(12px);background:rgba(10,10,10,0.85);border-bottom:1px solid rgba(255,255,255,0.08);transform:translateY(-100%);opacity:0;transition:transform 0.3s ease,opacity 0.3s ease;">
+<nav
+  id="navbar"
+  style="position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(12px);background:rgba(10,10,10,0.85);border-bottom:1px solid rgba(255,255,255,0.08);transform:translateY(-100%);opacity:0;transition:transform 0.3s ease,opacity 0.3s ease;"
+>
   <!-- nav content -->
 </nav>
 <script>
-(function() {
-  var nav = document.getElementById('navbar');
-  window.addEventListener('scroll', function() {
-    var scrollY = window.scrollY;
-    var nearBottom = scrollY + window.innerHeight >= document.documentElement.scrollHeight - 200;
-    var visible = scrollY > 80 && !nearBottom;
-    nav.style.transform = visible ? 'translateY(0)' : 'translateY(-100%)';
-    nav.style.opacity = visible ? '1' : '0';
-  }, { passive: true });
-})();
+  (function () {
+    var nav = document.getElementById("navbar");
+    window.addEventListener(
+      "scroll",
+      function () {
+        var scrollY = window.scrollY;
+        var nearBottom =
+          scrollY + window.innerHeight >=
+          document.documentElement.scrollHeight - 200;
+        var visible = scrollY > 80 && !nearBottom;
+        nav.style.transform = visible ? "translateY(0)" : "translateY(-100%)";
+        nav.style.opacity = visible ? "1" : "0";
+      },
+      { passive: true },
+    );
+  })();
 </script>
 ```

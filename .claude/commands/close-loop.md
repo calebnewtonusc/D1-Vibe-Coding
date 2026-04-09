@@ -54,7 +54,8 @@ git push origin main
 If the remote doesn't exist yet:
 
 ```bash
-gh repo create calebnewtonusc/{repo-name} --private --source=. --push
+GITHUB_USER=$(gh api user --jq .login 2>/dev/null)
+gh repo create "$GITHUB_USER/{repo-name}" --private --source=. --push
 ```
 
 Share the GitHub URL.

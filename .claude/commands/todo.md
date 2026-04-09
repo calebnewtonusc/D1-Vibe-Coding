@@ -28,7 +28,7 @@ Priority mapping (Todoist API):
 
 ```bash
 curl -sf "https://api.todoist.com/rest/v2/labels" \
-  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e"
+  -H "Authorization: Bearer $TODOIST_API_TOKEN"
 ```
 
 Find the label ID for "Sprint {n}".
@@ -37,7 +37,7 @@ Find the label ID for "Sprint {n}".
 
 ```bash
 curl -sf -X POST "https://api.todoist.com/rest/v2/tasks" \
-  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e" \
+  -H "Authorization: Bearer $TODOIST_API_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "content": "{content}",

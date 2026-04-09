@@ -11,14 +11,14 @@ Pull today's Todoist tasks and show a clean sprint-by-sprint breakdown.
 
 ```bash
 curl -sf "https://api.todoist.com/rest/v2/tasks?filter=today" \
-  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e"
+  -H "Authorization: Bearer $TODOIST_API_TOKEN"
 ```
 
 Also pull overdue:
 
 ```bash
 curl -sf "https://api.todoist.com/rest/v2/tasks?filter=overdue" \
-  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e"
+  -H "Authorization: Bearer $TODOIST_API_TOKEN"
 ```
 
 ## Step 2: Parse and organize

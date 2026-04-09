@@ -16,16 +16,16 @@ Otherwise search today's tasks for a match:
 
 ```bash
 curl -sf "https://api.todoist.com/rest/v2/tasks?filter=today" \
-  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e"
+  -H "Authorization: Bearer $TODOIST_API_TOKEN"
 ```
 
-Find the task whose content fuzzy-matches $ARGUMENTS. If multiple match, ask Caleb which one.
+Find the task whose content fuzzy-matches $ARGUMENTS. If multiple match, ask which one.
 
 ## Step 2: Close the task
 
 ```bash
 curl -sf -X POST "https://api.todoist.com/rest/v2/tasks/{task_id}/close" \
-  -H "Authorization: Bearer f0126e193b7fb233c00d57d8480de4741106209e"
+  -H "Authorization: Bearer $TODOIST_API_TOKEN"
 ```
 
 ## Step 3: Confirm

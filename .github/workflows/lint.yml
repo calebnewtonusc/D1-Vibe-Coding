@@ -1,0 +1,66 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for broken internal links
+        run: |
+          echo "Checking for broken internal links..."
+          ERRORS=0
+          # Check markdown links that reference local files
+          for file in $(find . -name "*.md" -not -path "./.git/*"); do
+            # Extract [text](path) links that don't start with http
+            grep -oP '\[.*?\]\(\K[^)]+' "$file" 2>/dev/null | while read -r link; do
+              # Skip URLs, anchors, and mailto
+              case "$link" in
+                http*|mailto*|#*) continue ;;
+              esac
+              # Resolve relative to the file's directory
+              dir=$(dirname "$file")
+              target="$dir/$link"
+              # Strip anchor from path
+              target="${target%%#*}"
+              if [ ! -f "$target" ] && [ ! -d "$target" ]; then
+                echo "BROKEN: $file -> $link"
+                ERRORS=$((ERRORS + 1))
+              fi
+            done
+          done
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "$ERRORS broken link(s) found"
+            exit 1
+          fi
+          echo "All internal links valid"
+
+      - name: Check for hardcoded personal paths
+        run: |
+          echo "Checking for hardcoded personal paths..."
+          ERRORS=0
+          # These patterns should never appear in committed files
+          PATTERNS="/Users/joelnewton|/home/specific-user"
+          if grep -rn "$PATTERNS" --include="*.md" --include="*.json" --include="*.sh" --include="*.ts" . | grep -v ".git/"; then
+            echo "ERROR: Found hardcoded personal paths. Use variables instead."
+            ERRORS=1
+          fi
+          if [ "$ERRORS" -gt 0 ]; then
+            exit 1
+          fi
+          echo "No hardcoded personal paths found"
+
+      - name: Check for leaked secrets patterns
+        run: |
+          echo "Checking for potential secret leaks..."
+          if grep -rn "sk-ant-api\|ghp_[a-zA-Z0-9]\{36\}\|ak_[a-zA-Z0-9]" --include="*.md" --include="*.json" --include="*.sh" --include="*.ts" . | grep -v ".git/" | grep -v "example\|placeholder\|YOUR_"; then
+            echo "ERROR: Potential secrets found in committed files"
+            exit 1
+          fi
+          echo "No leaked secrets found"

@@ -234,41 +234,64 @@ git branch -M main
 git push -u origin main -q 2>/dev/null || warn "Push failed — you may need to push manually"
 log "https://github.com/$GITHUB_USER/claude-context"
 
-# ── Repo 3: imessage-agent ────────────────────────────────────────────────────
-head "Setting up imessage-agent"
+# ── Repo 3: imessage-agent (optional, macOS only) ───────────────────────────
+IMSG_DIR=""
+SETUP_IMESSAGE=0
 
-IMSG_DIR="$WORKSPACE_DIR/imessage-agent"
-
-if [ -d "$IMSG_DIR/.git" ]; then
-  warn "imessage-agent already exists at $IMSG_DIR — pulling latest"
-  cd "$IMSG_DIR" && git pull -q 2>/dev/null || true
+if [[ "$(uname)" == "Darwin" ]]; then
+  echo ""
+  read -rp "  Set up iMessage agent? (macOS only, requires Messages.app) [y/N]: " IMSG_CHOICE
+  if [[ "$IMSG_CHOICE" =~ ^[Yy] ]]; then
+    SETUP_IMESSAGE=1
+  fi
 else
-  echo "  Cloning from calebnewtonusc/imessage-agent..."
-  gh repo clone calebnewtonusc/imessage-agent "$IMSG_DIR" 2>/dev/null || \
-    git clone "https://github.com/calebnewtonusc/imessage-agent.git" "$IMSG_DIR" -q
-  log "Cloned to $IMSG_DIR"
+  warn "Skipping iMessage agent (macOS only)"
 fi
 
-# Create .env with their key
-cat > "$IMSG_DIR/.env" << ENVEOF
+if [ "$SETUP_IMESSAGE" -eq 1 ]; then
+  head "Setting up imessage-agent"
+  IMSG_DIR="$WORKSPACE_DIR/imessage-agent"
+
+  if [ -d "$IMSG_DIR/.git" ]; then
+    warn "imessage-agent already exists at $IMSG_DIR. Pulling latest."
+    cd "$IMSG_DIR" && git pull -q 2>/dev/null || true
+  else
+    echo "  Cloning imessage-agent..."
+    gh repo clone calebnewtonusc/imessage-agent "$IMSG_DIR" 2>/dev/null || \
+      git clone "https://github.com/calebnewtonusc/imessage-agent.git" "$IMSG_DIR" -q 2>/dev/null
+    if [ -d "$IMSG_DIR" ]; then
+      log "Cloned to $IMSG_DIR"
+    else
+      warn "Could not clone imessage-agent. Skipping. You can set it up manually later."
+      SETUP_IMESSAGE=0
+    fi
+  fi
+
+  if [ "$SETUP_IMESSAGE" -eq 1 ]; then
+    # Create .env with their key
+    cat > "$IMSG_DIR/.env" << ENVEOF
 ANTHROPIC_API_KEY=${ANTHROPIC_KEY}
 # Add other keys below as needed
 ENVEOF
 
-if [ -f "$IMSG_DIR/.gitignore" ]; then
-  grep -q "^\.env" "$IMSG_DIR/.gitignore" || echo ".env" >> "$IMSG_DIR/.gitignore"
-fi
+    if [ -f "$IMSG_DIR/.gitignore" ]; then
+      grep -q "^\.env" "$IMSG_DIR/.gitignore" || echo ".env" >> "$IMSG_DIR/.gitignore"
+    fi
 
-# Install deps
-echo "  Installing dependencies..."
-cd "$IMSG_DIR"
-if command -v bun &>/dev/null; then
-  bun install -q 2>/dev/null && log "Dependencies installed (bun)"
+    # Install deps
+    echo "  Installing dependencies..."
+    cd "$IMSG_DIR"
+    if command -v bun &>/dev/null; then
+      bun install -q 2>/dev/null && log "Dependencies installed (bun)"
+    else
+      npm install -q 2>/dev/null && log "Dependencies installed (npm)"
+    fi
+
+    log "iMessage agent ready at $IMSG_DIR"
+  fi
 else
-  npm install -q 2>/dev/null && log "Dependencies installed (npm)"
+  log "Skipping iMessage agent"
 fi
-
-log "iMessage agent ready at $IMSG_DIR"
 
 # ── Wire ~/.claude/settings.json ─────────────────────────────────────────────
 head "Wiring ~/.claude/settings.json"
@@ -464,17 +487,19 @@ sep
 echo -e "  ${BLD}${GRN}Setup complete.${NC}"
 sep
 echo ""
-echo -e "  ${BLD}Three repos created:${NC}"
+echo -e "  ${BLD}Repos created:${NC}"
 echo -e "    ${CYN}$PERSONAL_REPO${NC}     https://github.com/$GITHUB_USER/$PERSONAL_REPO"
 echo -e "    ${CYN}claude-context${NC}   https://github.com/$GITHUB_USER/claude-context"
-echo -e "    ${CYN}imessage-agent${NC}   https://github.com/$GITHUB_USER/imessage-agent (forked from @calebnewton)"
+if [ -n "$IMSG_DIR" ] && [ "$SETUP_IMESSAGE" -eq 1 ]; then
+  echo -e "    ${CYN}imessage-agent${NC}   $IMSG_DIR"
+fi
 echo ""
 echo -e "  ${BLD}Wired:${NC}"
 echo "    ~/.claude/settings.json   hooks, env vars, permissions"
 if [ -n "$COMPOSIO_URL" ]; then
-  echo "    .mcp.json                 Composio (100+ tools) + iMessage agent"
+  echo "    .mcp.json                 Composio (100+ tools)"
 else
-  echo "    .mcp.json                 iMessage agent (add Composio URL later)"
+  echo "    .mcp.json                 (add Composio URL later for 100+ integrations)"
 fi
 echo ""
 echo -e "  ${BLD}Next steps:${NC}"

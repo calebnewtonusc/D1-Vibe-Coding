@@ -40,13 +40,14 @@
   },
   "alwaysThinkingEnabled": true,
   "hooks": {
-    "UserPromptSubmit": [
+    "_comment_UserPromptSubmit": "OPTIONAL: Add a session opener hook. The example below adds a prayer. Replace with your own ritual or remove entirely.",
+    "_example_UserPromptSubmit": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"systemMessage\": \"MANDATORY: The very first words of your response must be a prayer to Jesus Christ. Specific to the task. Personal. End with Amen. Then proceed.\"}'",
-            "statusMessage": "Praying..."
+            "command": "echo '{\"systemMessage\": \"Begin every response with a brief session opener (prayer, intention, or focus reminder). Then proceed.\"}'",
+            "statusMessage": "Session opener..."
           }
         ]
       }
@@ -69,7 +70,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '%s' '{\"hookSpecificOutput\": {\"hookEventName\": \"Stop\", \"additionalContext\": \"REMINDER: If you just completed any project, feature, or meaningful change — push to GitHub now. Create the repo if it does not exist, push to main, and share the URL. Never wait to be asked. Also check: did you leave any TODO or FIXME comments in edited files? Surface them.\"}}'",
+            "command": "printf '%s' '{\"hookSpecificOutput\": {\"hookEventName\": \"Stop\", \"additionalContext\": \"REMINDER: If you just completed any project, feature, or meaningful change, push to GitHub now. Create the repo if it does not exist, push to main, and share the URL. Also check: did you leave any TODO or FIXME comments in edited files? Surface them.\"}}'",
             "statusMessage": "End of session check..."
           }
         ]

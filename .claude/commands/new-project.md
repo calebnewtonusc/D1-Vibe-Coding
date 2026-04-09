@@ -26,8 +26,8 @@ Ask the user what type of project:
 ## Step 2: Create the directory and init git
 
 ```bash
-mkdir -p /Users/joelnewton/Desktop/2026-Code/projects/{name}
-cd /Users/joelnewton/Desktop/2026-Code/projects/{name}
+mkdir -p "$HOME/dev/projects/{name}"
+cd "$HOME/dev/projects/{name}"
 git init
 ```
 
@@ -36,7 +36,7 @@ git init
 ### Next.js app — full design system from day one
 
 ```bash
-cd /Users/joelnewton/Desktop/2026-Code/projects/{name}
+cd "$HOME/dev/projects/{name}"
 npx create-next-app@latest . --typescript --tailwind --app --src-dir --import-alias "@/*" --no-git
 npm install lucide-react framer-motion @tanstack/react-query zod react-hook-form @hookform/resolvers
 npm install -D prettier prettier-plugin-tailwindcss
@@ -203,10 +203,11 @@ git commit -m "init: {name} — {description or 'initial scaffold'}"
 ## Step 5: Create GitHub repo and push (always — never wait to be asked)
 
 ```bash
-gh repo create calebnewtonusc/{name} --private --source=. --push
+GITHUB_USER=$(gh api user --jq .login 2>/dev/null)
+gh repo create "$GITHUB_USER/{name}" --private --source=. --push
 ```
 
-Report the GitHub URL and remind Caleb to connect it to Vercel.
+Report the GitHub URL and remind the user to connect it to Vercel.
 
 ## Quality Check Before Finishing
 
@@ -219,5 +220,5 @@ Report the GitHub URL and remind Caleb to connect it to Vercel.
 - [ ] prettier + prettier-plugin-tailwindcss configured
 - [ ] vercel.json created
 - [ ] .env.example created
-- [ ] GitHub repo created and pushed (private, calebnewtonusc/{name})
+- [ ] GitHub repo created and pushed
 - [ ] No Co-Authored-By in commit message

@@ -13,7 +13,7 @@ Before anything else — check that no secrets are staged:
 git diff --cached --name-only | grep -E "^\.env|\.env\." && echo "BLOCKED: .env file staged — unstage before shipping" || echo "Clean"
 ```
 
-If a `.env` file is staged: **STOP**. Unstage it, warn Caleb, do not proceed.
+If a `.env` file is staged: **STOP**. Unstage it, warn the user, do not proceed.
 
 Also scan staged content for obvious secret patterns:
 

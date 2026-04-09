@@ -5,7 +5,7 @@ allowed-tools: Bash(gh:*), Bash(curl:*), Bash(date:*), Bash(cat:*), Bash(ls:*), 
 
 # Daily Brief
 
-Assemble Caleb's morning briefing. Pull live data, synthesize a focused daily plan. Signal over noise.
+Assemble the morning briefing. Pull live data, synthesize a focused daily plan. Signal over noise.
 
 ## Step 1: Today's date
 
@@ -36,7 +36,7 @@ gh issue list --assignee "@me" --state open --json number,title,updatedAt --limi
 
 ## Step 4: Current context
 
-Read `/Users/joelnewton/Desktop/2026-Code/.claude/context/CURRENT_CONTEXT_MAR_2026.md` for active projects, academic load, and recent decisions.
+Read your personal context files (`{name}-context/NOW.md`) for active projects and recent decisions. If the second brain is set up, these files load automatically at session start.
 
 ## Step 5: Synthesize the brief
 

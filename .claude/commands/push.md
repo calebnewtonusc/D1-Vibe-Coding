@@ -26,7 +26,7 @@ git diff --stat HEAD | grep -E "\.env" && echo "WARNING: .env file modified" || 
 git diff HEAD -- | grep -E "^\\+(sk-ant|sk-|ANTHROPIC|API_KEY|SECRET|PASSWORD|TOKEN)" | grep -v "process\.env\." | grep -v "example\|placeholder" | head -5
 ```
 
-If any real secrets appear in the diff — **STOP**, warn Caleb, do not commit.
+If any real secrets appear in the diff — **STOP**, warn the user, do not commit.
 
 ## Step 3: Determine what to stage
 
@@ -34,7 +34,7 @@ Look at modified files. For each:
 
 - Source files (.ts, .tsx, .py, .js, etc.) — stage
 - Config files (package.json, tsconfig.json, vercel.json, etc.) — stage
-- .env files — DO NOT stage, warn Caleb
+- .env files — DO NOT stage, warn the user
 - node_modules, .next, dist, **pycache** — skip entirely
 
 Stage by filename:
@@ -67,4 +67,4 @@ If no upstream: `git push -u origin main`
 
 ## Step 5: Report
 
-Show the commit hash and GitHub URL. If it's a new repo, remind Caleb to connect to Vercel.
+Show the commit hash and GitHub URL. If it's a new repo, remind the user to connect it to Vercel.

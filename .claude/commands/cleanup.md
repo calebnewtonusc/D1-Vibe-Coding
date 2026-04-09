@@ -47,5 +47,5 @@ If fixing:
 
 - Remove console.logs (unless they're part of a logger pattern)
 - Remove commented-out code blocks older than the current feature
-- Leave TODO comments but list them for Caleb to decide
+- Leave TODO comments but list them for the user to decide
 - Never auto-delete files — list them and ask
